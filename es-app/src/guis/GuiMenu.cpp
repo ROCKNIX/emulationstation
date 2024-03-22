@@ -1095,11 +1095,6 @@ void GuiMenu::openSystemSettings_batocera()
 		});
 	}
 
-    s->addEntry(_("CREATE GAME DIRECTORIES"), false, [window] {
-		runSystemCommand("systemd-tmpfiles --create /usr/config/system-dirs.conf", "", nullptr);
-		window->pushGui(new GuiMsgBox(window, _("Game directory creation complete.")));
-	});
-
 	s->addGroup(_("HARDWARE / PERFORMANCE"));
 
 #if defined(AMD64)
