@@ -880,61 +880,6 @@ void GuiMenu::openSystemSettings_batocera()
 
 		s->addWithLabel(_("BRIGHTNESS"), brightnessComponent);
 
-#if defined(RK3566) || defined(RK3566_X55)
-
-                // gamma
-                auto gamma = std::make_shared<SliderComponent>(mWindow, 1.f, 100.f, 1.f, "%");
-                gamma->setValue(std::stof(SystemConf::getInstance()->get("display.brightness")));
-                gamma->setOnValueChanged([](const float &newVal) {
-                        runSystemCommand("paneladj brightness " + std::to_string((int)round(newVal)),"", nullptr);
-                });
-                s->addWithLabel(_("GAMMA"), gamma);
-                s->addSaveFunc([this, gamma]
-                {
-                        SystemConf::getInstance()->set("display.brightness", std::to_string((int)round(gamma->getValue())));
-                        SystemConf::getInstance()->saveSystemConf();
-                });
-
-
-                // contrast
-                auto contrast = std::make_shared<SliderComponent>(mWindow, 1.f, 100.f, 1.f, "%");
-                contrast->setValue(std::stof(SystemConf::getInstance()->get("display.contrast")));
-                contrast->setOnValueChanged([](const float &newVal) {
-			runSystemCommand("paneladj contrast " + std::to_string((int)round(newVal)),"", nullptr);
-		});
-                s->addWithLabel(_("CONTRAST"), contrast);
-                s->addSaveFunc([this, contrast]
-                {
-                        SystemConf::getInstance()->set("display.contrast", std::to_string((int)round(contrast->getValue())));
-                        SystemConf::getInstance()->saveSystemConf();
-                });
-
-                // saturation
-                auto saturation = std::make_shared<SliderComponent>(mWindow, 1.f, 100.f, 1.f, "%");
-                saturation->setValue(std::stof(SystemConf::getInstance()->get("display.saturation")));
-                saturation->setOnValueChanged([](const float &newVal) { 
-			runSystemCommand("paneladj saturation " + std::to_string((int)round(newVal)),"", nullptr);
-		});
-                s->addWithLabel(_("SATURATION"), saturation);
-                s->addSaveFunc([this, saturation]
-                {
-                        SystemConf::getInstance()->set("display.saturation", std::to_string((int)round(saturation->getValue())));
-                        SystemConf::getInstance()->saveSystemConf();
-                });
-
-                // hue
-                auto hue = std::make_shared<SliderComponent>(mWindow, 1.f, 100.f, 1.f, "%");
-                hue->setValue(std::stof(SystemConf::getInstance()->get("display.hue")));
-                hue->setOnValueChanged([](const float &newVal) { 
-			runSystemCommand("paneladj hue " + std::to_string((int)round(newVal)),"", nullptr);
-		});
-                s->addWithLabel(_("HUE"), hue);
-                s->addSaveFunc([this, hue]
-                {
-                        SystemConf::getInstance()->set("display.hue", std::to_string((int)round(hue->getValue())));
-                        SystemConf::getInstance()->saveSystemConf();
-                });
-#endif
 	}
 	if (GetEnv("DEVICE_PWR_LED_CONTROL") == "true") {
 
