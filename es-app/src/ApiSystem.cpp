@@ -152,7 +152,7 @@ std::string ApiSystem::getApplicationName()
 
 bool ApiSystem::setOverscan(bool enable) 
 {
-	return executeScriptLegacy("batocera-config overscan " + std::string(enable ? "enable" : "disable"));
+	return executeScriptLegacy("rocknix-config overscan " + std::string(enable ? "enable" : "disable"));
 }
 
 // BusyComponent* ui
@@ -193,7 +193,7 @@ std::pair<std::string, int> ApiSystem::backupSystem(BusyComponent* ui, std::stri
 {
 	LOG(LogDebug) << "ApiSystem::backupSystem";
 
-	std::string updatecommand = "batocera-sync sync " + device;
+	std::string updatecommand = "rocknix-sync sync " + device;
 	FILE* pipe = popen(updatecommand.c_str(), "r");
 	if (pipe == NULL)
 		return std::pair<std::string, int>(std::string("Cannot call sync command"), -1);
@@ -252,7 +252,7 @@ std::pair<std::string, int> ApiSystem::scrape(BusyComponent* ui)
 {
 	LOG(LogDebug) << "ApiSystem::scrape";
 
-	FILE* pipe = popen("batocera-scraper", "r");
+	FILE* pipe = popen("rocknix-scraper", "r");
 	if (pipe == nullptr)
 		return std::pair<std::string, int>(std::string("Cannot call scrape command"), -1);
 
@@ -431,32 +431,32 @@ unsigned long ApiSystem::GetTotalRam()
 
 bool ApiSystem::scanNewBluetooth(const std::function<void(const std::string)>& func)
 {
-	return executeScriptLegacy("batocera-bluetooth trust", func).second == 0;
+	return executeScriptLegacy("rocknix-bluetooth trust", func).second == 0;
 }
 
 std::vector<std::string> ApiSystem::getBluetoothDeviceList()
 {
-	return executeEnumerationScript("batocera-bluetooth list");
+	return executeEnumerationScript("rocknix-bluetooth list");
 }
 
 bool ApiSystem::removeBluetoothDevice(const std::string deviceName)
 {
-	return executeScriptLegacy("batocera-bluetooth remove "+ deviceName);
+	return executeScriptLegacy("rocknix-bluetooth remove "+ deviceName);
 }
 
 std::vector<std::string> ApiSystem::getAvailableStorageDevices() 
 {
-	return executeEnumerationScript("batocera-config storage list");
+	return executeEnumerationScript("rocknix-config storage list");
 }
 
 std::vector<std::string> ApiSystem::getVideoModes() 
 {
-	return executeEnumerationScript("batocera-resolution listModes");
+	return executeEnumerationScript("rocknix-resolution listModes");
 }
 
 std::vector<std::string> ApiSystem::getAvailableBackupDevices() 
 {
-	return executeEnumerationScript("batocera-sync list");
+	return executeEnumerationScript("rocknix-sync list");
 }
 
 std::vector<std::string> ApiSystem::getAvailableInstallDevices() 
@@ -480,7 +480,7 @@ std::vector<std::string> ApiSystem::getAvailableOverclocking()
 
 std::vector<std::string> ApiSystem::getSystemInformations() 
 {
-	return executeEnumerationScript("batocera-info --full");
+	return executeEnumerationScript("rocknix-info --full");
 }
 
 std::vector<BiosSystem> ApiSystem::getBiosInformations(const std::string system) 
@@ -489,7 +489,7 @@ std::vector<BiosSystem> ApiSystem::getBiosInformations(const std::string system)
 	BiosSystem current;
 	bool isCurrent = false;
 
-	std::string cmd = "batocera-systems";
+	std::string cmd = "rocknix-systems";
 	if (!system.empty())
 		cmd += " --filter " + system;
 
@@ -548,7 +548,7 @@ std::string ApiSystem::getCurrentStorage()
 #endif
 
 	std::ostringstream oss;
-	oss << "batocera-config storage current";
+	oss << "rocknix-config storage current";
 	FILE *pipe = popen(oss.str().c_str(), "r");
 	char line[1024];
 
@@ -565,7 +565,7 @@ std::string ApiSystem::getCurrentStorage()
 
 bool ApiSystem::setStorage(std::string selected) 
 {
-	return executeScriptLegacy("batocera-config storage " + selected);
+	return executeScriptLegacy("rocknix-config storage " + selected);
 }
 
 bool ApiSystem::setButtonColorGameForce(std::string selected)
@@ -580,7 +580,7 @@ bool ApiSystem::setPowerLedGameForce(std::string selected)
 
 bool ApiSystem::forgetBluetoothControllers() 
 {
-	return executeScriptLegacy("batocera-config forgetBT");
+	return executeScriptLegacy("rocknix-config forgetBT");
 }
 
 std::string ApiSystem::getRootPassword() 
@@ -588,7 +588,7 @@ std::string ApiSystem::getRootPassword()
 	LOG(LogDebug) << "ApiSystem::getRootPassword";
 
 	std::ostringstream oss;
-	oss << "batocera-config getRootPassword";
+	oss << "rocknix-config getRootPassword";
 	FILE *pipe = popen(oss.str().c_str(), "r");
 	char line[1024];
 
@@ -606,7 +606,7 @@ std::string ApiSystem::getRootPassword()
 
 std::vector<std::string> ApiSystem::getAvailableVideoOutputDevices() 
 {
-	return executeEnumerationScript("batocera-config lsoutputs");
+	return executeEnumerationScript("rocknix-config lsoutputs");
 }
 
 std::vector<std::string> ApiSystem::getAvailableAudioOutputDevices() 
@@ -1332,13 +1332,13 @@ bool ApiSystem::isScriptingSupported(ScriptId script)
 		executables.push_back("wifictl");
 		break;
 	case ApiSystem::BLUETOOTH:
-		executables.push_back("batocera-bluetooth");
+		executables.push_back("rocknix-bluetooth");
 		break;
 	case ApiSystem::RESOLUTION:
-		executables.push_back("batocera-resolution");
+		executables.push_back("rocknix-resolution");
 		break;
 	case ApiSystem::BIOSINFORMATION:
-		executables.push_back("batocera-systems");
+		executables.push_back("rocknix-systems");
 		break;
 	case ApiSystem::DISKFORMAT:
 		executables.push_back("batocera-format");

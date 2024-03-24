@@ -102,14 +102,14 @@ bool Win32ApiSystem::isScriptingSupported(ScriptId script)
 		break;
 	case ApiSystem::BLUETOOTH:
 #if _DEBUG
-		executables.push_back("batocera-bluetooth");
+		executables.push_back("rocknix-bluetooth");
 #endif
 		break;
 	case ApiSystem::RESOLUTION:
-		executables.push_back("batocera-resolution");
+		executables.push_back("rocknix-resolution");
 		break;
 	case ApiSystem::BIOSINFORMATION:
-		executables.push_back("batocera-systems");
+		executables.push_back("rocknix-systems");
 		break;
 	case ApiSystem::NETPLAY:
 	case ApiSystem::GAMESETTINGS:
