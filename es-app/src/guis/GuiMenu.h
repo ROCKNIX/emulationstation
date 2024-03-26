@@ -102,6 +102,7 @@ private:
 	static void openSavestatesConfiguration(Window* mWindow, std::string configName);
 	
 	static void openLatencyReductionConfiguration(Window* mWindow, std::string configName);
+	static void openSystemOptionsConfiguration(Window* mWindow, std::string configName);
 	static void openCustomAspectRatioConfiguration(Window* mWindow, std::string configName);
 
 
