@@ -1605,7 +1605,7 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
 #ifdef _PANFROST
 	// Panfrost forcepack
 	auto optionsForcepackEnabled = std::make_shared<OptionListComponent<std::string>>(mWindow, _("Panfrost Forcepack"));
-    std::vector<std::string> availableForcepackEnabled = {{"Off"}}, {"On"};
+    std::vector<std::string> availableForcepackEnabled = {{"Off"}, {"On"}};
     std::string selectedForcepackEnabled = SystemConf::getInstance()->get(configName + ".forcepack");
     if (selectedForcepackEnabled.empty())
         selectedForcepackEnabled = "Off";
