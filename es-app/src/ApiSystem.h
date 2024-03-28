@@ -179,6 +179,9 @@ public:
     std::vector<std::string> getAvailableThreads();
     std::vector<std::string> getAvailableGovernors();
 
+    /* HW Info */
+    std::vector<std::string> getAvailableDisplayModes();
+
     std::vector<std::string> getTdpRange();
 
     /* LED Colors */

@@ -1503,6 +1503,136 @@ void GuiMenu::openLatencyReductionConfiguration(Window* mWindow, std::string con
 	mWindow->pushGui(guiLatency);
 }
 
+void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string configName)
+{
+	GuiSettings* guiSystemOptions = new GuiSettings(mWindow, _("SYSTEM OPTIONS").c_str());
+    bool cfound = false;
+
+    // Per game/core/emu CPU governor
+    auto optionsGovernors = std::make_shared<OptionListComponent<std::string> >(mWindow, _("CPU SCALING GOVERNOR"), false);
+
+    std::vector<std::string> availableGovernors = ApiSystem::getInstance()->getAvailableGovernors();
+    std::string selectedGovernors = SystemConf::getInstance()->get(configName + ".cpugovernor");
+    if (selectedGovernors.empty())
+            selectedGovernors = "default";
+
+    cfound = false;
+    for (auto it = availableGovernors.begin(); it != availableGovernors.end(); it++)
+    {
+	optionsGovernors->add((*it), (*it), selectedGovernors == (*it));
+	if (selectedGovernors == (*it))
+		cfound = true;
+    }
+    if (!cfound)
+            optionsGovernors->add(selectedGovernors, selectedGovernors, true);
+
+    guiSystemOptions->addWithLabel(_("CPU SCALING GOVERNOR"), optionsGovernors);
+
+    guiSystemOptions->addSaveFunc([configName, selectedGovernors, optionsGovernors]
+    {
+      if (optionsGovernors->changed()) {
+        SystemConf::getInstance()->set(configName + ".cpugovernor", optionsGovernors->getSelected());
+        SystemConf::getInstance()->saveSystemConf();
+      }
+    });
+
+	// GPU performance mode with enhanced power savings
+	auto gpuPerformance = std::make_shared<OptionListComponent<std::string> >(mWindow, _("GPU PERFORMANCE PROFILE"), false);
+	std::string gpu_performance = SystemConf::getInstance()->get(configName + ".gpuperf");
+	if (gpu_performance.empty())
+		gpu_performance = "default";
+
+	gpuPerformance->add(_("DEFAULT"), "default", gpu_performance == "default");
+	gpuPerformance->add(_("Balanced"), "auto", gpu_performance == "auto");
+	gpuPerformance->add(_("Battery Focus"), "low", gpu_performance == "low");
+#if defined(AMD64)
+	gpuPerformance->add(_("Performance Focus"), "profile_standard", gpu_performance == "profile_standard");
+#endif
+	gpuPerformance->add(_("Best Performance"), "profile_peak", gpu_performance == "profile_peak");
+
+	guiSystemOptions->addWithLabel(_("GPU PERFORMANCE PROFILE"), gpuPerformance);
+
+	guiSystemOptions->addSaveFunc([configName, gpuPerformance, gpu_performance]
+	{
+		if (gpuPerformance->changed()) {
+			SystemConf::getInstance()->set(configName + ".gpuperf", gpuPerformance->getSelected());
+			SystemConf::getInstance()->saveSystemConf();
+		}
+	});
+
+#ifdef _WLROOTS
+    // Per game/core/emu Display mode
+    auto optionsDisplayModes = std::make_shared<OptionListComponent<std::string> >(mWindow, _("DISPLAY MODE"), false);
+
+    std::vector<std::string> availableDisplayModes = ApiSystem::getInstance()->getAvailableDisplayModes();
+    std::string selectedDisplayMode = SystemConf::getInstance()->get(configName + ".display_mode");
+
+    for (auto it = availableDisplayModes.begin(); it != availableDisplayModes.end(); it++)
+    {
+        if (selectedDisplayMode.empty() && ((*it).find("preferred") != std::string::npos))
+        {
+            (*it) = (*it).substr((*it).find("px, ") + 4);
+            (*it) = (*it).substr(0, (*it).find(" Hz") + 3);
+            selectedDisplayMode = (*it);
+            continue;
+        }
+        // Remove resolution at start, and any trailing markers, e.g. "preferred" or  "current"
+        (*it) = (*it).substr((*it).find("px, ") + 4);
+        (*it) = (*it).substr(0, (*it).find(" Hz") + 3);
+    }
+
+    cfound = false;
+    for (auto it = availableDisplayModes.begin(); it != availableDisplayModes.end(); it++)
+    {
+	    optionsDisplayModes->add((*it), (*it), selectedDisplayMode == (*it));
+	if (selectedDisplayMode == (*it))
+		cfound = true;
+    }
+    if (!cfound)
+            optionsDisplayModes->add(selectedDisplayMode, selectedDisplayMode, true);
+
+    guiSystemOptions->addWithLabel(_("DISPLAY MODE"), optionsDisplayModes);
+
+    guiSystemOptions->addSaveFunc([configName, selectedDisplayMode, optionsDisplayModes]
+    {
+      if (optionsDisplayModes->changed()) {
+        SystemConf::getInstance()->set(configName + ".display_mode", optionsDisplayModes->getSelected());
+        SystemConf::getInstance()->saveSystemConf();
+      }
+    });
+#endif
+
+#ifdef _PANFROST
+	// Panfrost forcepack
+	auto optionsForcepackEnabled = std::make_shared<OptionListComponent<std::string>>(mWindow, _("Panfrost Forcepack"));
+    std::vector<std::string> availableForcepackEnabled = {{"Off"}, {"On"}};
+    std::string selectedForcepackEnabled = SystemConf::getInstance()->get(configName + ".forcepack");
+    if (selectedForcepackEnabled.empty())
+        selectedForcepackEnabled = "Off";
+
+    cfound = false;
+    for (auto it = availableForcepackEnabled.begin(); it != availableForcepackEnabled.end(); it++)
+    {
+	    optionsForcepackEnabled->add((*it), (*it), selectedForcepackEnabled == (*it));
+	if (selectedForcepackEnabled == (*it))
+		cfound = true;
+    }
+    if (!cfound)
+        optionsForcepackEnabled->add(selectedForcepackEnabled, selectedForcepackEnabled, true);
+
+	guiSystemOptions->addWithLabel(_("Panfrost Forcepack"), optionsForcepackEnabled);
+    guiSystemOptions->addSaveFunc([configName, selectedForcepackEnabled, optionsForcepackEnabled]
+    {
+      if (optionsForcepackEnabled->changed()) {
+        SystemConf::getInstance()->set(configName + ".forcepack", optionsForcepackEnabled->getSelected());
+        SystemConf::getInstance()->saveSystemConf();
+      }
+    });
+#endif
+
+	mWindow->pushGui(guiSystemOptions);
+}
+
 /*void GuiMenu::openCustomAspectRatioConfiguration(Window* mWindow, std::string configName)
 {
 	GuiSettings* guiViewport = new GuiSettings(mWindow, _("WIDTH/HEIGHT").c_str());
@@ -4474,57 +4604,9 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
 
 #endif
 
-        // Per game/core/emu CPU governor
-        auto optionsGovernors = std::make_shared<OptionListComponent<std::string> >(mWindow, _("CPU SCALING GOVERNOR"), false);
+    // System settings
+    systemConfiguration->addEntry(_("SYSTEM OPTIONS"), true, [mWindow, configName] { openSystemOptionsConfiguration(mWindow, configName); });
 
-        std::vector<std::string> availableGovernors = ApiSystem::getInstance()->getAvailableGovernors();
-        std::string selectedGovernors = SystemConf::getInstance()->get(configName + ".cpugovernor");
-        if (selectedGovernors.empty())
-                selectedGovernors = "default";
-
-        bool cfound = false;
-        for (auto it = availableGovernors.begin(); it != availableGovernors.end(); it++)
-        {
-		optionsGovernors->add((*it), (*it), selectedGovernors == (*it));
-		if (selectedGovernors == (*it))
-			cfound = true;
-        }
-        if (!cfound)
-                optionsGovernors->add(selectedGovernors, selectedGovernors, true);
-
-        systemConfiguration->addWithLabel(_("CPU SCALING GOVERNOR"), optionsGovernors);
-
-        systemConfiguration->addSaveFunc([configName, selectedGovernors, optionsGovernors]
-        {
-          if (optionsGovernors->changed()) {
-            SystemConf::getInstance()->set(configName + ".cpugovernor", optionsGovernors->getSelected());
-            SystemConf::getInstance()->saveSystemConf();
-          }
-        });
-
-	// GPU performance mode with enhanced power savings
-	auto gpuPerformance = std::make_shared<OptionListComponent<std::string> >(mWindow, _("GPU PERFORMANCE PROFILE"), false);
-	std::string gpu_performance = SystemConf::getInstance()->get(configName + ".gpuperf");
-	if (gpu_performance.empty())
-		gpu_performance = "default";
-
-	gpuPerformance->add(_("DEFAULT"), "default", gpu_performance == "default");
-	gpuPerformance->add(_("Balanced"), "auto", gpu_performance == "auto");
-	gpuPerformance->add(_("Battery Focus"), "low", gpu_performance == "low");
-#if defined(AMD64)
-	gpuPerformance->add(_("Performance Focus"), "profile_standard", gpu_performance == "profile_standard");
-#endif
-	gpuPerformance->add(_("Best Performance"), "profile_peak", gpu_performance == "profile_peak");
-
-	systemConfiguration->addWithLabel(_("GPU PERFORMANCE PROFILE"), gpuPerformance);
-
-	systemConfiguration->addSaveFunc([configName, gpuPerformance, gpu_performance]
-	{
-		if (gpuPerformance->changed()) {
-			SystemConf::getInstance()->set(configName + ".gpuperf", gpuPerformance->getSelected());
-			SystemConf::getInstance()->saveSystemConf();
-		}
-	});
 	if (systemData->isFeatureSupported(currentEmulator, currentCore, EmulatorFeatures::latency_reduction))
 		systemConfiguration->addEntry(_("LATENCY REDUCTION"), true, [mWindow, configName] { openLatencyReductionConfiguration(mWindow, configName); });
 
