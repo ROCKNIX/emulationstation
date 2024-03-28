@@ -1560,6 +1560,7 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
 		}
 	});
 
+#ifdef SWAY
     // Per game/core/emu Display mode
     auto optionsDisplayModes = std::make_shared<OptionListComponent<std::string> >(mWindow, _("DISPLAY MODE"), false);
 
@@ -1599,6 +1600,35 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
         SystemConf::getInstance()->saveSystemConf();
       }
     });
+#endif
+
+#ifdef PANFROST
+	// Panfrost forcepack
+	auto optionsForcepackEnabled = std::make_shared<OptionListComponent<std::string>>(mWindow, _("Panfrost Forcepack"));
+    std::vector<std::string> availableForcepackEnabled = {{"Off"}}, {"On"};
+    std::string selectedForcepackEnabled = SystemConf::getInstance()->get(configName + ".forcepack");
+    if (selectedForcepackEnabled.empty())
+        selectedForcepackEnabled = "Off";
+
+    cfound = false;
+    for (auto it = availableForcepackEnabled.begin(); it != availableForcepackEnabled.end(); it++)
+    {
+	    optionsForcepackEnabled->add((*it), (*it), selectedForcepackEnabled == (*it));
+	if (selectedForcepackEnabled == (*it))
+		cfound = true;
+    }
+    if (!cfound)
+        optionsForcepackEnabled->add(selectedForcepackEnabled, selectedForcepackEnabled, true);
+
+	guiSystemOptions->addWithLabel(_("Panfrost Forcepack"), optionsForcepackEnabled);
+    guiSystemOptions->addSaveFunc([configName, selectedForcepackEnabled, optionsForcepackEnabled]
+    {
+      if (optionsForcepackEnabled->changed()) {
+        SystemConf::getInstance()->set(configName + ".forcepack", optionsForcepackEnabled->getSelected());
+        SystemConf::getInstance()->saveSystemConf();
+      }
+    });
+#endif
 
 	mWindow->pushGui(guiSystemOptions);
 }
