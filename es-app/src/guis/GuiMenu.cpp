@@ -1560,7 +1560,7 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
 		}
 	});
 
-#ifdef SWAY
+#ifdef _WLROOTS
     // Per game/core/emu Display mode
     auto optionsDisplayModes = std::make_shared<OptionListComponent<std::string> >(mWindow, _("DISPLAY MODE"), false);
 
@@ -1602,7 +1602,7 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
     });
 #endif
 
-#ifdef PANFROST
+#ifdef _PANFROST
 	// Panfrost forcepack
 	auto optionsForcepackEnabled = std::make_shared<OptionListComponent<std::string>>(mWindow, _("Panfrost Forcepack"));
     std::vector<std::string> availableForcepackEnabled = {{"Off"}}, {"On"};

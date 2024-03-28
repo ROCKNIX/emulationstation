@@ -15,6 +15,8 @@ option(ENABLE_TTS "Set to ON to enable text to speech" OFF)
 
 # Online updating
 option(ENABLE_UPDATES "Set to ON to enable online updates." ${ENABLE_UPDATES})
+option(PANFROST "Set to 1 to enable panfrost settings." ${PANFROST})
+option(WLROOTS "Set to 1 to enable wlroots settings." ${WLROOTS})
 
 # emuelec
 option(ENABLE_EMUELEC "Set to ON to enable EmuELEC changes" ${ENABLE_EMUELEC})
@@ -40,6 +42,14 @@ endif()
 # Online updates
 if("${ENABLE_UPDATES}" STREQUAL "1")
   add_definitions(-D_ENABLEUPDATES)
+endif()
+
+if("${PANFROST}" STREQUAL "1")
+  add_definitions(-D_PANFROST)
+endif()
+
+if("${WLROOTS}" STREQUAL "1")
+    add_definitions(-D_WLROOTS)
 endif()
 
 # emuelec
