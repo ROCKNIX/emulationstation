@@ -1508,6 +1508,38 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
 	GuiSettings* guiSystemOptions = new GuiSettings(mWindow, _("SYSTEM OPTIONS").c_str());
     bool cfound = false;
 
+#if defined(S922X) || defined(RK3588)  || defined(RK3588_ACE) || defined(RK3399)
+    // Core chooser
+    auto cores_used = std::make_shared<OptionListComponent<std::string>>(mWindow, _("CORES USED"));
+    cores_used->addRange({ { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get("global.cores"));
+    guiSystemOptions->addWithLabel(_("CORES USED"), cores_used);
+    guiSystemOptions->addSaveFunc([cores_used] { SystemConf::getInstance()->set("global.cores", cores_used->getSelected()); });
+#endif	
+
+    if (GetEnv("DEVICE_HAS_FAN") == "true") {
+      // Provides cooling profile switching
+      auto optionsFanProfile = std::make_shared<OptionListComponent<std::string> >(mWindow, _("COOLING PROFILE"), false);
+      std::string selectedFanProfile = SystemConf::getInstance()->get(configName + ".cooling.profile");
+      if (selectedFanProfile.empty())
+            selectedFanProfile = "default";
+
+      optionsFanProfile->add(_("DEFAULT"),"default", selectedFanProfile == "default");
+      optionsFanProfile->add(_("AUTO"),"auto", selectedFanProfile == "auto");
+      optionsFanProfile->add(_("QUIET"),"quiet", selectedFanProfile == "quiet");
+      optionsFanProfile->add(_("MODERATE"),"moderate", selectedFanProfile == "moderate");
+      optionsFanProfile->add(_("AGGRESSIVE"),"aggressive", selectedFanProfile == "aggressive");
+      optionsFanProfile->add(_("CUSTOM"),"custom", selectedFanProfile == "custom");
+
+      guiSystemOptions->addWithLabel(_("COOLING PROFILE"), optionsFanProfile);
+      guiSystemOptions->addSaveFunc([optionsFanProfile, selectedFanProfile, configName]
+      {
+        if (optionsFanProfile->changed()) {
+          SystemConf::getInstance()->set(configName + ".cooling.profile", optionsFanProfile->getSelected());
+          SystemConf::getInstance()->saveSystemConf();
+        }
+      });
+	}
+
     // Per game/core/emu CPU governor
     auto optionsGovernors = std::make_shared<OptionListComponent<std::string> >(mWindow, _("CPU SCALING GOVERNOR"), false);
 
@@ -1981,14 +2013,6 @@ void GuiMenu::openGamesSettings_batocera()
 	s->addWithLabel(_("BILINEAR FILTERING"), smoothing_enabled);
 	s->addSaveFunc([smoothing_enabled] { SystemConf::getInstance()->set("global.smooth", smoothing_enabled->getSelected()); });
 
-#if defined(S922X) || defined(RK3588)  || defined(RK3588_ACE) || defined(RK3399)
-        // Core chooser
-        auto cores_used = std::make_shared<OptionListComponent<std::string>>(mWindow, _("CORES USED"));
-        cores_used->addRange({ { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get("global.cores"));
-        s->addWithLabel(_("CORES USED"), cores_used);
-        s->addSaveFunc([cores_used] { SystemConf::getInstance()->set("global.cores", cores_used->getSelected()); });
-#endif
-	
 	// rewind
 	auto rewind_enabled = std::make_shared<OptionListComponent<std::string>>(mWindow, _("REWIND"));
 	rewind_enabled->addRange({{_("DEFAULT"), "default"}, {_("ON"), "1"}, {_("OFF"), "0"}}, SystemConf::getInstance()->get("global.rewind"));
@@ -4330,6 +4354,9 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
 		systemConfiguration->addWithLabel(_("Emulator"), emulChoice);
 	}
 
+    // System settings
+    systemConfiguration->addEntry(_("SYSTEM OPTIONS"), true, [mWindow, configName] { openSystemOptionsConfiguration(mWindow, configName); });
+
 	// Screen ratio choice
 	if (systemData->isFeatureSupported(currentEmulator, currentCore, EmulatorFeatures::ratio))
 	{
@@ -4471,15 +4498,6 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
 		systemConfiguration->addSaveFunc([integerscaleoverscale_enabled, configName] { SystemConf::getInstance()->set(configName + ".integerscaleoverscale", integerscaleoverscale_enabled->getSelected()); });
 	}
 
-
-#if defined(S922X) || defined(RK3588)  || defined(RK3588_ACE) || defined(RK3399)
-        // Core chooser
-        auto cores_used = std::make_shared<OptionListComponent<std::string>>(mWindow, _("CORES USED"));
-        cores_used->addRange({ { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get(configName + ".cores"));
-        systemConfiguration->addWithLabel(_("CORES USED"), cores_used);
-        systemConfiguration->addSaveFunc([cores_used, configName] { SystemConf::getInstance()->set(configName + ".cores", cores_used->getSelected()); });
-#endif
-	
 #if defined(AMD64)
 
         // Allow offlining all but n threads
@@ -4512,31 +4530,6 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
         });
 
 #endif
-
-        if (GetEnv("DEVICE_HAS_FAN") == "true") {
-          // Provides cooling profile switching
-          auto optionsFanProfile = std::make_shared<OptionListComponent<std::string> >(mWindow, _("COOLING PROFILE"), false);
-          std::string selectedFanProfile = SystemConf::getInstance()->get(configName + ".cooling.profile");
-          if (selectedFanProfile.empty())
-                selectedFanProfile = "default";
-
-          optionsFanProfile->add(_("DEFAULT"),"default", selectedFanProfile == "default");
-          optionsFanProfile->add(_("AUTO"),"auto", selectedFanProfile == "auto");
-          optionsFanProfile->add(_("QUIET"),"quiet", selectedFanProfile == "quiet");
-          optionsFanProfile->add(_("MODERATE"),"moderate", selectedFanProfile == "moderate");
-          optionsFanProfile->add(_("AGGRESSIVE"),"aggressive", selectedFanProfile == "aggressive");
-          optionsFanProfile->add(_("CUSTOM"),"custom", selectedFanProfile == "custom");
-
-          systemConfiguration->addWithLabel(_("COOLING PROFILE"), optionsFanProfile);
-
-          systemConfiguration->addSaveFunc([optionsFanProfile, selectedFanProfile, configName]
-          {
-            if (optionsFanProfile->changed()) {
-              SystemConf::getInstance()->set(configName + ".cooling.profile", optionsFanProfile->getSelected());
-              SystemConf::getInstance()->saveSystemConf();
-            }
-          });
-	}
 
 // Prep for additional device support.
 #if defined(AMD64)
@@ -4603,9 +4596,6 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
         }
 
 #endif
-
-    // System settings
-    systemConfiguration->addEntry(_("SYSTEM OPTIONS"), true, [mWindow, configName] { openSystemOptionsConfiguration(mWindow, configName); });
 
 	if (systemData->isFeatureSupported(currentEmulator, currentCore, EmulatorFeatures::latency_reduction))
 		systemConfiguration->addEntry(_("LATENCY REDUCTION"), true, [mWindow, configName] { openLatencyReductionConfiguration(mWindow, configName); });
