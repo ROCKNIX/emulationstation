@@ -486,13 +486,13 @@ bool SystemView::input(InputConfig* config, Input input)
 				listInput(1);
 				return true;
 			}
-			if ((Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedLike("down", input)) || config->isMappedTo("rightshoulder", input))
+			if (Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedTo("rightshoulder", input))
 			{
 				int cursor = moveCursorFast(true);
 				listInput(cursor - mCursor);
 				return true;
 			}
-			if ((Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedLike("up", input)) || config->isMappedTo("leftshoulder", input))
+			if (Settings::getInstance()->getBool("QuickSystemSelect") && config->isMappedTo("leftshoulder", input))
 			{
 				int cursor = moveCursorFast(false);
 				listInput(cursor - mCursor);
