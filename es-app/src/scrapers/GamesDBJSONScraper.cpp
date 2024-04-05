@@ -89,7 +89,7 @@ const std::map<PlatformId, std::string> gamesdb_new_platformid_map{
 	{ TRS80_COLOR_COMPUTER, "4941" },
 	{ TANDY, "4941" },
 	{ SUPERGRAFX, "34" }, // The code is TurboGrafx 16, but they manage SUPERGRAFX into this one....
-	{ MEGADUCK, "4948" },
+	{ CREATONIC_MEGA_DUCK, "4948" },
 	{ AMIGACD32, "4947" },	
 	{ NEOGEO_CD, "4956" },
 	{ PCFX, "4930" },

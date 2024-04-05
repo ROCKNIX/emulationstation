@@ -107,13 +107,14 @@ namespace PlatformIds
 		TIC80,
 		MODEL3,
 		IMAGEVIEWER,
-		MEGADUCK,
+		CREATONIC_MEGA_DUCK,
 
 		// Windows Specific
 		VISUALPINBALL,
 		FUTUREPINBALL,
 
 		// Misc systems
+		ARDUBOY,
 		CHANNELF,
 		ORICATMOS,
 		THOMSON_TO_MO,
@@ -144,6 +145,8 @@ namespace PlatformIds
 		PHILIPS_CDI,
 		SUPER_NINTENDO_MSU1,
 		Z_MACHINE,
+		WASM4,
+		VIRCON32,
 
 		PLATFORM_IGNORE, // do not allow scraping for this system
 		PLATFORM_COUNT
