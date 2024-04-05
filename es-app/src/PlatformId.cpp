@@ -73,8 +73,8 @@ namespace PlatformIds
 		{ "scummvm",			SCUMMVM },
 		{ "x1",					SHARP_X1 },
 		{ "x68000",				SHARP_X6800 },
-		{ "pcengine",			TURBOGRAFX_16 }, // (aka PC Engine) HuCards onlyy
-		{ "pcenginecd",			TURBOGRAFX_CD }, // (aka PC Engine) CD-ROMs onlynly
+		{ "pcengine",			TURBOGRAFX_16 },
+		{ "pcenginecd",			TURBOGRAFX_CD },
 		{ "wonderswan",			WONDERSWAN },
 		{ "wonderswancolor",	WONDERSWAN_COLOR },
 		{ "zxspectrum",			ZX_SPECTRUM },
@@ -101,7 +101,7 @@ namespace PlatformIds
 		{ "tic80",				TIC80 },
 		{ "watara",				WATARA_SUPERVISION },
 		{ "supervision",		WATARA_SUPERVISION },
-		{ "megaduck",			MEGADUCK },
+		{ "megaduck",			CREATONIC_MEGA_DUCK },
 
 		// batocera specific names
 		{ "gb2players",			GAME_BOY },
@@ -163,10 +163,13 @@ namespace PlatformIds
 		{ "adam",				ADAM },
 
 		{ "fmtowns",			FMTOWNS },
-		{ "cdi",				PHILIPS_CDI },			
+		{ "cdi",				PHILIPS_CDI },
+		{ "arduboy",			ARDUBOY },
 
 		{ "snes-msu1",			SUPER_NINTENDO_MSU1 },
 		{ "z-machine",			Z_MACHINE },
+		{ "wasm4",			WASM4 },
+		{ "vircon32",			VIRCON32 },
 
 		{ "ignore",				PLATFORM_IGNORE },
 		{ "invalid",			PLATFORM_COUNT }
