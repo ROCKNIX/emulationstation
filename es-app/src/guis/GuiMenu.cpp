@@ -3450,6 +3450,7 @@ void GuiMenu::openUISettings()
 			SystemConf::getInstance()->saveSystemConf();
 		});
 
+#ifndef _WLROOTS
 	auto desktop_enabled = std::make_shared<SwitchComponent>(mWindow);
 	bool desktopEnabled = SystemConf::getInstance()->get("desktop.enabled") == "1";
 	desktop_enabled->setState(desktopEnabled);
@@ -3467,7 +3468,7 @@ void GuiMenu::openUISettings()
 			}, "NO",nullptr));
 		}
 	});
-
+#endif
 
 	s->addGroup(_("DISPLAY OPTIONS"));
 
