@@ -283,6 +283,7 @@ void GuiMenu::openResetOptions(Window* mWindow, std::string configName)
                                 [] {
                                 runSystemCommand("/usr/bin/run \"/usr/bin/factoryreset standalone\"", "", nullptr);
                                 }, _("NO"), nullptr));
+     });
 
 
     resetOptions->addGroup(_("SYSTEM MANAGEMENT"));
