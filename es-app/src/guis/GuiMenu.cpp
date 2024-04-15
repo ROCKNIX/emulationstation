@@ -278,6 +278,13 @@ void GuiMenu::openResetOptions(Window* mWindow, std::string configName)
      });
 #endif
 
+    resetOptions->addEntry(_("RESET STANDALONE EMULATOR CONFIGS TO DEFAULT"), true, [mWindow] {
+    mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: STANDALONE EMULATOR CONFIGS WILL RESET TO DEFAULT\n\nNO BACKUP WILL BE CREATED!\n\nRESET STANDALONE EMULATOR CONFIGS TO DEFAULT?"), _("YES"),
+                                [] {
+                                runSystemCommand("/usr/bin/run \"/usr/bin/factoryreset standalone\"", "", nullptr);
+                                }, _("NO"), nullptr));
+
+
     resetOptions->addGroup(_("SYSTEM MANAGEMENT"));
 
     resetOptions->addEntry(_("AUDIO RESET"), true, [mWindow] {
