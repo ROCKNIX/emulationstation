@@ -1516,13 +1516,13 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
 	GuiSettings* guiSystemOptions = new GuiSettings(mWindow, _("SYSTEM OPTIONS").c_str());
     bool cfound = false;
 
-#if defined(S922X) || defined(RK3588)  || defined(RK3399)
+#if defined(S922X) || defined(RK3588) || defined(RK3399)
     // Core chooser
     auto cores_used = std::make_shared<OptionListComponent<std::string>>(mWindow, _("CORES USED"));
-    cores_used->addRange({ { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get("global.cores"));
+    cores_used->addRange({ { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get(configName + ".cores"));
     guiSystemOptions->addWithLabel(_("CORES USED"), cores_used);
-    guiSystemOptions->addSaveFunc([cores_used] { SystemConf::getInstance()->set("global.cores", cores_used->getSelected()); });
-#endif	
+    guiSystemOptions->addSaveFunc([cores_used, configName] { SystemConf::getInstance()->set(configName + ".cores", cores_used->getSelected()); });
+#endif
 
     if (GetEnv("DEVICE_HAS_FAN") == "true") {
       // Provides cooling profile switching
@@ -2020,6 +2020,14 @@ void GuiMenu::openGamesSettings_batocera()
 	smoothing_enabled->addRange({{_("DEFAULT"), "default"}, {_("ON"), "1"}, {_("OFF"), "0"}}, SystemConf::getInstance()->get("global.smooth"));
 	s->addWithLabel(_("BILINEAR FILTERING"), smoothing_enabled);
 	s->addSaveFunc([smoothing_enabled] { SystemConf::getInstance()->set("global.smooth", smoothing_enabled->getSelected()); });
+
+#if defined(S922X) || defined(RK3588) || defined(RK3399)
+    // Core chooser
+    auto cores_used = std::make_shared<OptionListComponent<std::string>>(mWindow, _("CORES USED"));
+    cores_used->addRange({ { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get("global.cores"));
+    s->addWithLabel(_("CORES USED"), cores_used);
+    s->addSaveFunc([cores_used] { SystemConf::getInstance()->set("global.cores", cores_used->getSelected()); });
+#endif
 
 	// rewind
 	auto rewind_enabled = std::make_shared<OptionListComponent<std::string>>(mWindow, _("REWIND"));
