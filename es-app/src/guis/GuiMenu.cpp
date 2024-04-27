@@ -1519,7 +1519,7 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
 #if defined(S922X) || defined(RK3588) || defined(RK3399)
     // Core chooser
     auto cores_used = std::make_shared<OptionListComponent<std::string>>(mWindow, _("CORES USED"));
-    cores_used->addRange({ { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get(configName + ".cores"));
+    cores_used->addRange({ {("DEFAULT"), "" }, { _("ALL"), "all" },{ _("BIG") , "big" },{ _("LITTLE") , "little" } }, SystemConf::getInstance()->get(configName + ".cores"));
     guiSystemOptions->addWithLabel(_("CORES USED"), cores_used);
     guiSystemOptions->addSaveFunc([cores_used, configName] { SystemConf::getInstance()->set(configName + ".cores", cores_used->getSelected()); });
 #endif
