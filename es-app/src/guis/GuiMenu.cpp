@@ -1243,6 +1243,30 @@ void GuiMenu::openSystemSettings_batocera()
                 });
         }
 
+        const std::string gpuDriverScript = "/usr/bin/gpudriver";
+        if (Utils::FileSystem::exists(gpuDriverScript)) {
+                auto optionsGpuDriver = std::make_shared<OptionListComponent<std::string> >(mWindow, _("GPU DRIVER"), false);
+                std::string selectedGpuDriver = std::string(getShOutput(R"(/usr/bin/gpudriver)"));
+
+                std::string a;
+                for(std::stringstream ss(getShOutput(R"(/usr/bin/gpudriver --options)")); getline(ss, a, ' '); ) {
+                        optionsGpuDriver->add(a, a, a == selectedGpuDriver);
+                }
+
+                s->addWithLabel(_("GPU DRIVER"), optionsGpuDriver);
+
+                s->addSaveFunc([this, window, gpuDriverScript, optionsGpuDriver, selectedGpuDriver] {
+                        if (optionsGpuDriver->changed()) {
+                                runSystemCommand(gpuDriverScript + " " + optionsGpuDriver->getSelected(), "", nullptr);
+                                window->pushGui(new GuiMsgBox(window, _("GPU driver will be switched on next reboot"),
+                                            _("Reboot now"), [] { quitES(QuitMode::REBOOT); },
+                                            _("later"), nullptr)
+                                        );
+                        }
+                });
+        }
+
+
 	s->addGroup(_("HARDWARE / POWER SAVING"));
         // Automatically enable or disable enhanced power saving mode
         auto enh_powersave = std::make_shared<SwitchComponent>(mWindow);
