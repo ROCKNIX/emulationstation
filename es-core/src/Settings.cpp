@@ -142,11 +142,11 @@ void Settings::setDefaults()
 	mIntMap["ScraperResizeHeight"] = 0;
 
 	auto totalRam = ApiSystem::getInstance()->GetTotalRam();
-	if ( totalRam <= 1000 ) {
+	if ( totalRam <= 1025 ) {
 		mIntMap["MaxVRAM"] = 128;
-	} else if ( totalRam <= 2000 && totalRam > 1000) {
+	} else if ( totalRam <= 2049 && totalRam > 1025) {
 		mIntMap["MaxVRAM"] = 256;
-	} else if ( totalRam <= 4000 && totalRam > 2000) {
+	} else if ( totalRam <= 4097 && totalRam > 2049) {
                 mIntMap["MaxVRAM"] = 384;
 	} else {
                 mIntMap["MaxVRAM"] = 512;
