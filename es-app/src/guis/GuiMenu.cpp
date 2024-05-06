@@ -858,7 +858,6 @@ void GuiMenu::openSystemSettings_batocera()
         rotate_root_pass->setOnChangedCallback([this, rotate_root_pass]
         {
                 SystemConf::getInstance()->setBool("rotate.root.password", rotate_root_pass->getState());
-                SystemConf::getInstance()->saveSystemConf();
         });
 
         auto root_password = std::make_shared<TextComponent>(mWindow, SystemConf::getInstance()->get("root.password"), ThemeData::getMenuTheme()->Text.font, ThemeData::getMenuTheme()->Text.color);
@@ -900,7 +899,6 @@ void GuiMenu::openSystemSettings_batocera()
 		pwr_led_disabled->setOnChangedCallback([pwr_led_disabled] {
 			bool pwrleddisabled = pwr_led_disabled->getState();
 				SystemConf::getInstance()->set("powerled.disabled", pwrleddisabled ? "1" : "0");
-				SystemConf::getInstance()->saveSystemConf();
 		});
 	}
 	
@@ -931,7 +929,6 @@ void GuiMenu::openSystemSettings_batocera()
 			if (optionsColors->changed()) {
 				SystemConf::getInstance()->set("led.color", optionsColors->getSelected());
 				runSystemCommand("/usr/bin/sh -lc \"/usr/bin/ledcontrol " + optionsColors->getSelected() + "\"" , "", nullptr);
-				SystemConf::getInstance()->saveSystemConf();
 			}
 		});
 	}
@@ -951,7 +948,6 @@ void GuiMenu::openSystemSettings_batocera()
 	        {
 	                if (optionsLEDBrightness->changed()) {
 	                        SystemConf::getInstance()->set("led.brightness", optionsLEDBrightness->getSelected());
-	                        SystemConf::getInstance()->saveSystemConf();
 	                        runSystemCommand("/usr/bin/ledcontrol brightness " + optionsLEDBrightness->getSelected(), "", nullptr);
 	                }
 	        });
@@ -975,7 +971,6 @@ void GuiMenu::openSystemSettings_batocera()
 
                                 bool dswitchenabled = device_switch->getState();
                                 SystemConf::getInstance()->set("system.device-dtb-r36s", dswitchenabled ? "1" : "0");
-                                SystemConf::getInstance()->saveSystemConf();
                                 if (device_switch->getState() == false) {
                                         runSystemCommand("/usr/bin/device-switch R33S", "", nullptr);
                                 } else {
@@ -996,7 +991,6 @@ void GuiMenu::openSystemSettings_batocera()
 		s->addWithLabel(_("AUTODETECT GAMES CARD"), mount_games);
 		mount_games->setOnChangedCallback([this, s, mount_games] {
 			SystemConf::getInstance()->setBool("system.automount", mount_games->getState());
-			SystemConf::getInstance()->saveSystemConf();
 			runSystemCommand("/usr/bin/systemctl restart jelos-automount", "", nullptr);
 		});
 
@@ -1009,7 +1003,6 @@ void GuiMenu::openSystemSettings_batocera()
 	                overlayState->setOnChangedCallback([this, s, overlayState] {
 	                        bool overlayStateEnabled = overlayState->getState();
 				SystemConf::getInstance()->setBool("system.merged.storage", overlayState->getState());
-				SystemConf::getInstance()->saveSystemConf();
 	                        runSystemCommand("/usr/bin/systemctl restart jelos-automount", "", nullptr);
 			});
 
@@ -1030,7 +1023,6 @@ void GuiMenu::openSystemSettings_batocera()
 					mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: CHANGING THE PRIMARY CARD CAN CAUSE ACCESS TO GAMES TO BE LOST, REQUIRING MANUAL INTERVENTION TO CORRECT. CONTINUE?"), _("YES"), [this, optionsMSDevice, selectedMSDevice]
 					{
 						SystemConf::getInstance()->set("system.merged.device", optionsMSDevice->getSelected());
-						SystemConf::getInstance()->saveSystemConf();
 						runSystemCommand("/usr/bin/systemctl restart jelos-automount " + optionsMSDevice->getSelected(), "", nullptr);
 					}, _("NO"), nullptr));
 				}
@@ -1076,7 +1068,6 @@ void GuiMenu::openSystemSettings_batocera()
 		if (optionsThreads->changed()) {
 			SystemConf::getInstance()->set("system.threads", optionsThreads->getSelected());
 			runSystemCommand("/usr/bin/sh -lc \". /etc/profile.d/099-freqfunctions; onlinethreads " + optionsThreads->getSelected() + " 0" + "\"" , "", nullptr);
-			SystemConf::getInstance()->saveSystemConf();
 		}
 	});
 
@@ -1100,7 +1091,6 @@ void GuiMenu::openSystemSettings_batocera()
 	  {
 	    if (optionsFanProfile->changed()) {
 	      SystemConf::getInstance()->set("cooling.profile", optionsFanProfile->getSelected());
-	      SystemConf::getInstance()->saveSystemConf();
 	      runSystemCommand("systemctl restart fancontrol", "", nullptr);
 	    }
 	  });
@@ -1139,7 +1129,6 @@ void GuiMenu::openSystemSettings_batocera()
 				mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: OVERCLOCKING YOUR DEVICE MAY RESULT IN STABILITY PROBLEMS OR CAUSE HARDWARE DAMAGE!\n\nUSING THE QUIET COOLING PROFILE WHILE USING CERTAIN OVERCLOCKS MAY CAUSE PANIC REBOOTS!\n\nJELOS IS NOT RESPONSIBLE FOR ANY DAMAGE THAT MAY OCCUR USING THESE SETTINGS!\n\nCLICK YES THAT YOU AGREE, OR NO TO CANCEL."), _("YES"),
 	                                [this,optionsOCProfile] {
 						SystemConf::getInstance()->set("system.overclock", optionsOCProfile->getSelected());
-						SystemConf::getInstance()->saveSystemConf();
 						runSystemCommand("/usr/bin/overclock " + optionsOCProfile->getSelected(), "", nullptr);
 	                                }, _("NO"), nullptr));
 			}
@@ -1166,7 +1155,6 @@ void GuiMenu::openSystemSettings_batocera()
                 {
                         if (optionsEPP->changed()) {
                                 SystemConf::getInstance()->set("system.power.epp", optionsEPP->getSelected());
-                                SystemConf::getInstance()->saveSystemConf();
                                 runSystemCommand("/usr/bin/set_epp " + optionsEPP->getSelected(), "", nullptr);
                         }
                 });
@@ -1197,7 +1185,6 @@ void GuiMenu::openSystemSettings_batocera()
         {
           if (optionsGovernors->changed()) {
             SystemConf::getInstance()->set("system.cpugovernor", optionsGovernors->getSelected());
-            SystemConf::getInstance()->saveSystemConf();
           }
           runSystemCommand("/usr/bin/sh -lc \". /etc/profile.d/099-freqfunctions; "+ optionsGovernors->getSelected() + "\"", "", nullptr);
         });
@@ -1220,7 +1207,6 @@ void GuiMenu::openSystemSettings_batocera()
 	{
 		if (gpuPerformance->changed()) {
 			SystemConf::getInstance()->set("system.gpuperf", gpuPerformance->getSelected());
-			SystemConf::getInstance()->saveSystemConf();
 			runSystemCommand("/usr/bin/sh -lc \". /etc/profile.d/030-powerfunctions; gpu_performance_level "+ gpuPerformance->getSelected() + "\"", "", nullptr);
 		}
 	});
@@ -1239,7 +1225,6 @@ void GuiMenu::openSystemSettings_batocera()
                 }
                 bool turbomode = turbo_mode->getState();
                         SystemConf::getInstance()->set("enable.turbo-mode", turbomode ? "1" : "0");
-                        SystemConf::getInstance()->saveSystemConf();
                 });
         }
 
@@ -1276,7 +1261,6 @@ void GuiMenu::openSystemSettings_batocera()
         s->addSaveFunc([enh_powersave] {
                 bool enhpowersaveEnabled = enh_powersave->getState();
                 SystemConf::getInstance()->set("system.powersave", enhpowersaveEnabled ? "1" : "0");
-                SystemConf::getInstance()->saveSystemConf();
         });
 
         if (SystemConf::getInstance()->getBool("system.powersave", true)) {
@@ -1288,7 +1272,6 @@ void GuiMenu::openSystemSettings_batocera()
         	enh_cpupowersave->setOnChangedCallback([enh_cpupowersave] {
         	        bool enhcpupowersaveEnabled = enh_cpupowersave->getState();
                	 SystemConf::getInstance()->set("system.power.cpu", enhcpupowersaveEnabled ? "1" : "0");
-               	 SystemConf::getInstance()->saveSystemConf();
         	});
 
 	        auto enh_audiopowersave = std::make_shared<SwitchComponent>(mWindow);
@@ -1298,7 +1281,6 @@ void GuiMenu::openSystemSettings_batocera()
 	        enh_audiopowersave->setOnChangedCallback([enh_audiopowersave] {
 	                bool enhaudiopowersaveEnabled = enh_audiopowersave->getState();
 	                SystemConf::getInstance()->set("system.power.audio", enhaudiopowersaveEnabled ? "1" : "0");
-	                SystemConf::getInstance()->saveSystemConf();
 	        });
 
 		// Automatically enable or disable WIFI power saving mode
@@ -1309,7 +1291,6 @@ void GuiMenu::openSystemSettings_batocera()
 		wifi_powersave->setOnChangedCallback([wifi_powersave] {
 			bool wifipowersaveEnabled = wifi_powersave->getState();
 			SystemConf::getInstance()->set("system.power.wifi", wifipowersaveEnabled ? "1" : "0");
-			SystemConf::getInstance()->saveSystemConf();
 			runSystemCommand("/usr/bin/wifictl setpowersave", "", nullptr);
 		});
 
@@ -1322,7 +1303,6 @@ void GuiMenu::openSystemSettings_batocera()
 	        enh_pciepowersave->setOnChangedCallback([enh_pciepowersave] {
 	                bool enhpciepowersaveEnabled = enh_pciepowersave->getState();
 	                SystemConf::getInstance()->set("system.power.pcie", enhpciepowersaveEnabled ? "1" : "0");
-	                SystemConf::getInstance()->saveSystemConf();
 	        });
 
 	        auto wakeevents = std::make_shared<SwitchComponent>(mWindow);
@@ -1332,7 +1312,6 @@ void GuiMenu::openSystemSettings_batocera()
 	        wakeevents->setOnChangedCallback([wakeevents] {
 	                bool wakeeventsEnabled = wakeevents->getState();
 	                SystemConf::getInstance()->set("system.power.wakeevents", wakeeventsEnabled ? "1" : "0");
-	                SystemConf::getInstance()->saveSystemConf();
 	        });
 
 	        auto rtpm = std::make_shared<SwitchComponent>(mWindow);
@@ -1342,7 +1321,6 @@ void GuiMenu::openSystemSettings_batocera()
 	        rtpm->setOnChangedCallback([rtpm] {
 	                bool rtpmEnabled = rtpm->getState();
 	                SystemConf::getInstance()->set("system.power.rtpm", rtpmEnabled ? "1" : "0");
-	                SystemConf::getInstance()->saveSystemConf();
 	        });
 	}
 
@@ -1375,7 +1353,6 @@ void GuiMenu::openSystemSettings_batocera()
                 if (optionsSleep->changed()) {
                         SystemConf::getInstance()->set("system.suspendmode", optionsSleep->getSelected());
                         runSystemCommand("/usr/bin/suspendmode " + optionsSleep->getSelected(), "", nullptr);
-                        SystemConf::getInstance()->saveSystemConf();
                 }
         });
 #endif
@@ -1394,7 +1371,6 @@ void GuiMenu::openSystemSettings_batocera()
         }
         bool internalwifi = internal_wifi->getState();
                 SystemConf::getInstance()->set("internal.wifi", internalwifi ? "1" : "0");
-                SystemConf::getInstance()->saveSystemConf();
         });
 #endif
 
@@ -1424,7 +1400,6 @@ void GuiMenu::openSystemSettings_batocera()
         {
           if (optionsUpdates->changed()) {
             SystemConf::getInstance()->set("updates.branch", optionsUpdates->getSelected());
-            SystemConf::getInstance()->saveSystemConf();
           }
         });
 
@@ -1567,7 +1542,6 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
       {
         if (optionsFanProfile->changed()) {
           SystemConf::getInstance()->set(configName + ".cooling.profile", optionsFanProfile->getSelected());
-          SystemConf::getInstance()->saveSystemConf();
         }
       });
 	}
@@ -1596,7 +1570,6 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
     {
       if (optionsGovernors->changed()) {
         SystemConf::getInstance()->set(configName + ".cpugovernor", optionsGovernors->getSelected());
-        SystemConf::getInstance()->saveSystemConf();
       }
     });
 
@@ -1620,7 +1593,6 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
 	{
 		if (gpuPerformance->changed()) {
 			SystemConf::getInstance()->set(configName + ".gpuperf", gpuPerformance->getSelected());
-			SystemConf::getInstance()->saveSystemConf();
 		}
 	});
 
@@ -1661,7 +1633,6 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
     {
       if (optionsDisplayModes->changed()) {
         SystemConf::getInstance()->set(configName + ".display_mode", optionsDisplayModes->getSelected());
-        SystemConf::getInstance()->saveSystemConf();
       }
     });
 #endif
@@ -1689,7 +1660,6 @@ void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string config
     {
       if (optionsForcepackEnabled->changed()) {
         SystemConf::getInstance()->set(configName + ".forcepack", optionsForcepackEnabled->getSelected());
-        SystemConf::getInstance()->saveSystemConf();
       }
     });
 #endif
@@ -1789,7 +1759,6 @@ void GuiMenu::openRetroachievementsSettings()
 		retroachievements->addSaveFunc([retroachievements_leaderboards_list]
 	{
 		SystemConf::getInstance()->set("global.retroachievements.leaderboards", retroachievements_leaderboards_list->getSelected());
-		SystemConf::getInstance()->saveSystemConf();
 	});
 
 	// retroachievements_challenge_indicators
@@ -2205,7 +2174,6 @@ void GuiMenu::openGamesSettings_batocera()
 			if (ai_service_pause->changed())
 				SystemConf::getInstance()->set("global.ai_service_pause",
 					ai_service_pause->getState() ? "1" : "0");
-			SystemConf::getInstance()->saveSystemConf();
 		});
 
 		mWindow->pushGui(ai_service);
@@ -2512,7 +2480,6 @@ void GuiMenu::openControllersSettings_batocera(int autoSel)
 			}
 			bool bluetoothenabled = bluetoothd_enabled->getState();
 			SystemConf::getInstance()->set("bluetooth.enabled", bluetoothenabled ? "1" : "0");
-			SystemConf::getInstance()->saveSystemConf();
 		});
 
 		// PAIR A BLUETOOTH CONTROLLER OR BT AUDIO DEVICE
@@ -3402,7 +3369,6 @@ void GuiMenu::openUISettings()
 			msg += _("Do you want to proceed ?");
 			window->pushGui(new GuiMsgBox(window, msg, _("YES"), [selectedLanguage] {
 				SystemConf::getInstance()->set("system.language", selectedLanguage);
-				SystemConf::getInstance()->saveSystemConf();
 				quitES(QuitMode::QUIT);
 			}, "NO",nullptr));
 #ifdef HAVE_INTL
@@ -3459,7 +3425,6 @@ void GuiMenu::openUISettings()
 	s->addSaveFunc([retroarchRgui]
 	{
 		SystemConf::getInstance()->set("global.retroarch.menu_driver", retroarchRgui->getSelected());
-		SystemConf::getInstance()->saveSystemConf();
 	});
 
         auto invertJoy = std::make_shared<SwitchComponent>(mWindow);
@@ -3487,7 +3452,6 @@ void GuiMenu::openUISettings()
 	s->addSaveFunc([fps_enabled] {
 		bool fpsenabled = fps_enabled->getState();
 	SystemConf::getInstance()->set("global.showFPS", fpsenabled ? "1" : "0");
-			SystemConf::getInstance()->saveSystemConf();
 		});
 
 #ifndef _WLROOTS
@@ -3503,7 +3467,6 @@ void GuiMenu::openUISettings()
 				[this,desktop_enabled] {
 					bool desktopenabled = desktop_enabled->getState();
 					SystemConf::getInstance()->set("desktop.enabled", desktopenabled ? "1" : "0");
-					SystemConf::getInstance()->saveSystemConf();
 					quitES(QuitMode::REBOOT);
 			}, "NO",nullptr));
 		}
@@ -3702,7 +3665,6 @@ void GuiMenu::openSoundSettings()
 				}
 				bool swhpenabled = sw_hp_enabled->getState();
 				SystemConf::getInstance()->set("headphone.enabled", swhpenabled ? "1" : "0");
-				SystemConf::getInstance()->saveSystemConf();
 			});
 	}
 
@@ -3810,7 +3772,6 @@ void GuiMenu::openSoundSettings()
         s->addSaveFunc([batteryWarning] {
                 bool batteryWarningEnabled = batteryWarning->getState();
                 SystemConf::getInstance()->set("system.battery.warning", batteryWarningEnabled ? "1" : "0");
-                SystemConf::getInstance()->saveSystemConf();
         });
 
 	auto video_audio = std::make_shared<SwitchComponent>(mWindow);
@@ -3909,7 +3870,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
         ipv6_enable->setOnChangedCallback([ipv6_enable] {
                 bool ipv6Enabled = ipv6_enable->getState();
                 SystemConf::getInstance()->set("ipv6.enabled", ipv6Enabled ? "1" : "0");
-                SystemConf::getInstance()->saveSystemConf();
                 runSystemCommand("/usr/bin/toggle-ipv6", "", nullptr);
         });
 
@@ -3960,7 +3920,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
 
 		bool adhocenabled = enable_adhoc->getState();
 		SystemConf::getInstance()->setBool("network.adhoc.enabled", adhocenabled);
-		SystemConf::getInstance()->saveSystemConf();
 
 		if (enable_net->getState() == true)
 		{
@@ -3983,7 +3942,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
                 }
 		bool networkenabled = enable_net->getState();
 		SystemConf::getInstance()->setBool("network.enabled", networkenabled);
-                SystemConf::getInstance()->saveSystemConf();
         });
 
 	s->addGroup(_("NETWORK SERVICES"));
@@ -4005,7 +3963,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
                         }
 			bool sshenabled = sshd_enabled->getState();
 			SystemConf::getInstance()->set("ssh.enabled", sshenabled ? "1" : "0");
-			SystemConf::getInstance()->saveSystemConf();
                 });
 
        auto samba_enabled = std::make_shared<SwitchComponent>(mWindow);
@@ -4025,7 +3982,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
                         }
                 bool sambaenabled = samba_enabled->getState();
                 SystemConf::getInstance()->set("samba.enabled", sambaenabled ? "1" : "0");
-                                SystemConf::getInstance()->saveSystemConf();
                 });
 
      auto simple_http_enabled = std::make_shared<SwitchComponent>(mWindow);
@@ -4040,7 +3996,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
                         }
                 bool simplehttpenabled = simple_http_enabled->getState();
                 SystemConf::getInstance()->set("simplehttp.enabled", simplehttpenabled ? "1" : "0");
-                                SystemConf::getInstance()->saveSystemConf();
                 });
 
        auto optionsUSBGadget = std::make_shared<OptionListComponent<std::string> >(mWindow, _("USB GADGET FUNCTION"), false);
@@ -4058,7 +4013,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
                 {
                         if (optionsUSBGadget->changed()) {
                                 SystemConf::getInstance()->set("usbgadget.function", optionsUSBGadget->getSelected());
-				SystemConf::getInstance()->saveSystemConf();
                                 runSystemCommand("/usr/bin/usbgadget stop", "", nullptr);
                                         if (optionsUSBGadget->getSelected() == "mtp")
                                                 runSystemCommand("/usr/bin/usbgadget start mtp", "", nullptr);
@@ -4086,7 +4040,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
                         }
                 bool syncthingenabled = enable_syncthing->getState();
                 SystemConf::getInstance()->set("syncthing.enabled", syncthingenabled ? "1" : "0");
-                                SystemConf::getInstance()->saveSystemConf();
                 });
 
        auto mount_cloud = std::make_shared<SwitchComponent>(mWindow);
@@ -4101,7 +4054,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
                         }
                 bool cloudenabled = mount_cloud->getState();
                 SystemConf::getInstance()->set("clouddrive.mounted", cloudenabled ? "1" : "0");
-                                SystemConf::getInstance()->saveSystemConf();
                 });
 
 	s->addGroup(_("VPN SERVICES"));
@@ -4121,7 +4073,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
 				runSystemCommand("wg-quick up " + wireguardConfigFile, "", nullptr);
 			}
 			SystemConf::getInstance()->set("wireguard.up", wireguard->getState() ? "1" : "0");
-			SystemConf::getInstance()->saveSystemConf();
 		});
 	}
 
@@ -4140,7 +4091,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
 			runSystemCommand("systemctl stop tailscaled", "", nullptr);
 		}
 		SystemConf::getInstance()->set("tailscale.up", tsEnabled ? "1" : "0");
-		SystemConf::getInstance()->saveSystemConf();
 	});
 
 	std::string tsUrl;
@@ -4164,7 +4114,6 @@ void GuiMenu::openNetworkSettings_batocera(bool selectWifiEnable, bool selectAdh
 			runSystemCommand("systemctl stop zerotier-one", "", nullptr);
 		}
 		SystemConf::getInstance()->set("zerotier.up", ztEnabled ? "1" : "0");
-		SystemConf::getInstance()->saveSystemConf();
 	});
 
 	mWindow->pushGui(s);
@@ -4566,7 +4515,6 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
                 if (optionsThreads->changed()) {
                         SystemConf::getInstance()->set(configName +".threads", optionsThreads->getSelected());
                         runSystemCommand("/usr/bin/sh -lc \". /etc/profile.d/099-freqfunctions; onlinethreads " + optionsThreads->getSelected() + " 0" + "\"" , "", nullptr);
-                        SystemConf::getInstance()->saveSystemConf();
                 }
         });
 
@@ -4605,7 +4553,6 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
 	                        mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: OVERCLOCKING YOUR DEVICE MAY RESULT IN STABILITY PROBLEMS OR CAUSE HARDWARE DAMAGE!\n\nUSING THE QUIET COOLING PROFILE WHILE USING CERTAIN OVERCLOCKS MAY CAUSE PANIC REBOOTS!\n\nJELOS IS NOT RESPONSIBLE FOR ANY DAMAGE THAT MAY OCCUR USING THESE SETTINGS!\n\nCLICK YES THAT YOU AGREE, OR NO TO CANCEL."), _("YES"),
 				[optionsOCProfile,configName] {
 	                                SystemConf::getInstance()->set(configName + ".overclock", optionsOCProfile->getSelected());
-	                                SystemConf::getInstance()->saveSystemConf();
 	                        }, _("NO"), nullptr));
 	                }
 	        });
@@ -4631,7 +4578,6 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
                 {
                         if (optionsEPP->changed()) {
                                 SystemConf::getInstance()->set(configName + ".power.epp", optionsEPP->getSelected());
-                                SystemConf::getInstance()->saveSystemConf();
                         }
                 });
         }

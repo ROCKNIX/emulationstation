@@ -311,7 +311,6 @@ GuiMoonlight::GuiMoonlight(Window* window)
       std::string new_server_ip;
       if (ParseServerIp(line, &new_server_ip) && server_ip != new_server_ip) {
   			SystemConf::getInstance()->set("moonlight.host", new_server_ip);
-	  		SystemConf::getInstance()->saveSystemConf();
       }
       const std::string pared_ok = "Succesfully paired";
       if (line == "Succesfully paired") {
