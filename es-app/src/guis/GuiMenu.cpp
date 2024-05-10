@@ -1251,31 +1251,13 @@ void GuiMenu::openSystemSettings_batocera()
                 });
         }
 
-        const std::string dtbOverlayScript = "/usr/bin/dtb_overlay";
-        if (Utils::FileSystem::exists("/flash/overlays")) {
-                auto optionsDtbOverlays = std::make_shared<OptionListComponent<std::string> >(mWindow, _("DTB_OVERLAYS"), false);
-                std::string selectedDtbOverlay = std::string(getShOutput(R"(/usr/bin/dtb_overlay)"));
-
-		        for (auto path : Utils::FileSystem::getDirContent("/flash/overlays", true, true)) {
-                        auto file = Utils::FileSystem::getFileName(path);
-                        optionsDtbOverlays->add(file, file, file == selectedDtbOverlay);
-                }
-
-                s->addWithLabel(_("DTB OVERLAYS"), optionsDtbOverlays);
-
-                s->addSaveFunc([this, window, dtbOverlayScript, optionsDtbOverlays, selectedDtbOverlay] {
-                        if (optionsDtbOverlays->changed()) {
-                                runSystemCommand(dtbOverlayScript + " " + optionsDtbOverlays->getSelected(), "", nullptr);
-                                window->pushGui(new GuiMsgBox(window, _("DTB overlay will be applied on next reboot"),
-                                            _("Reboot now"), [] { quitES(QuitMode::REBOOT); },
-                                            _("later"), nullptr)
-                                        );
-                        }
-                });
+        if (Utils::FileSystem::exists("/usr/bin/dtb_overlay")) {
+                s->addGroup(_("HARDWARE TWEAKS"));
+                dtbOverlayItem(mWindow, s, "undervolt-cpu");
+                dtbOverlayItem(mWindow, s, "custom");
         }
 
-
-	s->addGroup(_("HARDWARE / POWER SAVING"));
+        s->addGroup(_("HARDWARE / POWER SAVING"));
         // Automatically enable or disable enhanced power saving mode
         auto enh_powersave = std::make_shared<SwitchComponent>(mWindow);
         bool enhpowersaveEnabled = SystemConf::getInstance()->get("system.powersave") == "1";
@@ -1531,6 +1513,44 @@ void GuiMenu::openLatencyReductionConfiguration(Window* mWindow, std::string con
 	guiLatency->addSaveFunc([configName, audio_latency] { SystemConf::getInstance()->set(configName + ".audiolatency", audio_latency->getSelected()); });
 	
 	mWindow->pushGui(guiLatency);
+}
+
+void GuiMenu::dtbOverlayItem(Window* mWindow, GuiSettings *s, const std::string dtb_type)
+{
+        const std::string overlayScript = "/usr/bin/dtb_overlay";
+        const std::string getDtb = overlayScript + " get " + dtb_type;
+        const std::string listDtb = overlayScript + " ls " + dtb_type;
+        const std::string setDtb = overlayScript + " set " + dtb_type;
+        const std::string title = dtb_type + " DTB OVERLAY";
+
+        auto optionsDtb = std::make_shared<OptionListComponent<std::string> >(mWindow, _(title.c_str()), false);
+        std::string selectedDtb = std::string(getShOutput(getDtb));
+        if (selectedDtb.empty() || selectedDtb.compare("None") == 0)
+                optionsDtb->add("None", "None", true);
+        else
+                optionsDtb->add("None", "None", false);
+
+        std::string option;
+        for(std::stringstream ss(getShOutput(listDtb)); getline(ss, option, ' '); ) {
+                optionsDtb->add(option, option, option == selectedDtb);
+        }
+
+        s->addWithLabel(_(title.c_str()), optionsDtb);
+
+        s->addSaveFunc([this, mWindow, overlayScript, setDtb, optionsDtb] {
+                if (optionsDtb->changed()) {
+                        runSystemCommand(setDtb + " " + optionsDtb->getSelected(), "", nullptr);
+                        runSystemCommand(overlayScript + " write", "", nullptr);
+                        mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: You are altering "
+                            "hardware parameters thay may yield your system unstable or unbootable. "
+                            "In this case you will need to revcover by manually editing "
+                            "extlinux/extlinux.conf on the ROCKNIX partition from a PC, by "
+                            "removing the whole line starting with: FDTOVERLAYS. \n "
+                            "The changes will be applied on next reboot"),
+                            _("Reboot now"), [] { quitES(QuitMode::REBOOT); },
+                            _("later"), nullptr));
+                }
+       });
 }
 
 void GuiMenu::openSystemOptionsConfiguration(Window* mWindow, std::string configName)

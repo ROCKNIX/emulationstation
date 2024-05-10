@@ -102,7 +102,9 @@ private:
 	static void openSavestatesConfiguration(Window* mWindow, std::string configName);
 	
 	static void openLatencyReductionConfiguration(Window* mWindow, std::string configName);
-	static void openSystemOptionsConfiguration(Window* mWindow, std::string configName);
+    void dtbOverlayItem(Window* window, GuiSettings *s, const std::string dtb_type);
+
+    static void openSystemOptionsConfiguration(Window* mWindow, std::string configName);
 	static void openCustomAspectRatioConfiguration(Window* mWindow, std::string configName);
 
 
