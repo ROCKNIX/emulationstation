@@ -1251,27 +1251,58 @@ void GuiMenu::openSystemSettings_batocera()
                 });
         }
 
-        const std::string dtbOverlayScript = "/usr/bin/dtb_overlay";
-        if (Utils::FileSystem::exists("/flash/overlays")) {
-                auto optionsDtbOverlays = std::make_shared<OptionListComponent<std::string> >(mWindow, _("DTB_OVERLAYS"), false);
-                std::string selectedDtbOverlay = std::string(getShOutput(R"(/usr/bin/dtb_overlay)"));
+        if (Utils::FileSystem::exists("/usr/bin/dtb_overlay")) {
+            s->addGroup(_("HARDWARE TWEAKS"));
+            const std::string overlayScript = "/usr/bin/dtb_overlay";
+            std::string option;
 
-		        for (auto path : Utils::FileSystem::getDirContent("/flash/overlays", true, true)) {
-                        auto file = Utils::FileSystem::getFileName(path);
-                        optionsDtbOverlays->add(file, file, file == selectedDtbOverlay);
+            // CPU UNDERVOLT
+            auto optionsCpuUndervoltDtb = std::make_shared<OptionListComponent<std::string> >(mWindow, _("CPU UNDERVOLT DTB OVERLAY"), false);
+            std::string selectedCpuUndervoltDtb = std::string(getShOutput(R"(/usr/bin/dtb_overlay get undervolt-cpu)"));
+            if (selectedCpuUndervoltDtb.empty())
+                optionsCpuUndervoltDtb->add("None", "None", true);
+            else
+                optionsCpuUndervoltDtb->add("None", "None", false);
+
+            for(std::stringstream ss(getShOutput(R"(/usr/bin/dtb_overlay ls undervolt-cpu)")); getline(ss, option, ' '); ) {
+                optionsCpuUndervoltDtb->add(option, option, option == selectedCpuUndervoltDtb);
+            }
+
+            s->addWithLabel(_("CPU UNDERVOLT DTB OVERLAY"), optionsCpuUndervoltDtb);
+
+            s->addSaveFunc([this, window, overlayScript, optionsCpuUndervoltDtb, selectedCpuUndervoltDtb] {
+                if (optionsCpuUndervoltDtb->changed()) {
+                    runSystemCommand(overlayScript + " set undervolt-cpu " + optionsCpuUndervoltDtb->getSelected(), "", nullptr);
+                    runSystemCommand(overlayScript + " write", "", nullptr);
+                    window->pushGui(new GuiMsgBox(window, _("DTB overlay will be applied on next reboot"),
+                               _("Reboot now"), [] { quitES(QuitMode::REBOOT); },
+                               _("later"), nullptr));
                 }
+           });
 
-                s->addWithLabel(_("DTB OVERLAYS"), optionsDtbOverlays);
+            // Custom DTB overlay
+            auto optionsCustomDtbOverlay = std::make_shared<OptionListComponent<std::string> >(mWindow, _("CUSTOM DTB OVERLAY"), false);
+            std::string selectedCustomDtbOverlay = std::string(getShOutput(R"(/usr/bin/dtb_overlay get custom)"));
+            if (selectedCustomDtbOverlay.empty())
+                optionsCustomDtbOverlay->add("None", "", true);
+            else
+                optionsCustomDtbOverlay->add("None", "", false);
 
-                s->addSaveFunc([this, window, dtbOverlayScript, optionsDtbOverlays, selectedDtbOverlay] {
-                        if (optionsDtbOverlays->changed()) {
-                                runSystemCommand(dtbOverlayScript + " " + optionsDtbOverlays->getSelected(), "", nullptr);
-                                window->pushGui(new GuiMsgBox(window, _("DTB overlay will be applied on next reboot"),
-                                            _("Reboot now"), [] { quitES(QuitMode::REBOOT); },
-                                            _("later"), nullptr)
-                                        );
-                        }
-                });
+            for(std::stringstream ss(getShOutput(R"(/usr/bin/dtb_overlay ls custom)")); getline(ss, option, ' '); ) {
+                optionsCustomDtbOverlay->add(option, option, option == selectedCustomDtbOverlay);
+            }
+
+            s->addWithLabel(_("CUSTOM DTB OVERLAY"), optionsCustomDtbOverlay);
+
+            s->addSaveFunc([this, window, overlayScript, optionsCustomDtbOverlay, selectedCustomDtbOverlay] {
+                if (optionsCustomDtbOverlay->changed()) {
+                    runSystemCommand(overlayScript + " set custom " + optionsCustomDtbOverlay->getSelected(), "", nullptr);
+                    runSystemCommand(overlayScript + " write", "", nullptr);
+                    window->pushGui(new GuiMsgBox(window, _("DTB overlay will be applied on next reboot"),
+                               _("Reboot now"), [] { quitES(QuitMode::REBOOT); },
+                               _("later"), nullptr));
+                }
+           });
         }
 
 
