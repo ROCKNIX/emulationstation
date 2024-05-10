@@ -1251,6 +1251,29 @@ void GuiMenu::openSystemSettings_batocera()
                 });
         }
 
+        const std::string dtbOverlayScript = "/usr/bin/dtb_overlay";
+        if (Utils::FileSystem::exists("/flash/overlays")) {
+                auto optionsDtbOverlays = std::make_shared<OptionListComponent<std::string> >(mWindow, _("DTB_OVERLAYS"), false);
+                std::string selectedDtbOverlay = std::string(getShOutput(R"(/usr/bin/dtb_overlay)"));
+
+		        for (auto path : Utils::FileSystem::getDirContent("/flash/overlays", true, true)) {
+                        auto file = Utils::FileSystem::getFileName(path);
+                        optionsDtbOverlays->add(file, file, file == selectedDtbOverlay);
+                }
+
+                s->addWithLabel(_("DTB OVERLAYS"), optionsDtbOverlays);
+
+                s->addSaveFunc([this, window, dtbOverlayScript, optionsDtbOverlays, selectedDtbOverlay] {
+                        if (optionsDtbOverlays->changed()) {
+                                runSystemCommand(dtbOverlayScript + " " + optionsDtbOverlays->getSelected(), "", nullptr);
+                                window->pushGui(new GuiMsgBox(window, _("DTB overlay will be applied on next reboot"),
+                                            _("Reboot now"), [] { quitES(QuitMode::REBOOT); },
+                                            _("later"), nullptr)
+                                        );
+                        }
+                });
+        }
+
 
 	s->addGroup(_("HARDWARE / POWER SAVING"));
         // Automatically enable or disable enhanced power saving mode
