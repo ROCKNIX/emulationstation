@@ -180,9 +180,12 @@ void SystemScreenSaver::startScreenSaver()
 		}	
 	}
 
-	// No videos. Just use a standard screensaver
+	// No videos. Just use a standard screensaver (black screen)
 	mState = STATE_SCREENSAVER_ACTIVE;
 	mCurrentGame = NULL;
+	if (AudioManager::isInitialized())
+		AudioManager::getInstance()->deinit();
+
 }
 
 void SystemScreenSaver::stopScreenSaver()
@@ -226,6 +229,10 @@ void SystemScreenSaver::stopScreenSaver()
 				AudioManager::getInstance()->playRandomMusic();
 		}
 	}
+
+	/* coming out of black screensaver */
+	if (!AudioManager::isInitialized())
+		AudioManager::getInstance()->init();
 }
 
 void SystemScreenSaver::renderScreenSaver()
