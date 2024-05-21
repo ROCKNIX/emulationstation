@@ -521,9 +521,9 @@ int main(int argc, char* argv[])
 	else
 		AudioManager::getInstance()->playRandomMusic();
 
-
 	int lastTime = SDL_GetTicks();
 	int ps_time = SDL_GetTicks();
+	int frameStart_time;
 
 	delete stopWatch;
 
@@ -534,41 +534,31 @@ int main(int argc, char* argv[])
 
 		SDL_Event event;
 
-		bool ps_standby = PowerSaver::getState() && (int) SDL_GetTicks() - ps_time > PowerSaver::getMode();
-		if(ps_standby ? SDL_WaitEventTimeout(&event, PowerSaver::getTimeout()) : SDL_PollEvent(&event))
+		/* grab inital timestamp */
+		frameStart_time = SDL_GetTicks();
+
+		/* if in sleep, it will come back here over and over again, so 1ms delay is fine */
+		if(window.isSleeping())
 		{
+			lastTime = SDL_GetTicks();
+
 			// PowerSaver can push events to exit SDL_WaitEventTimeout immediatly
 			// Reset this event's state
 			TRYCATCH("resetRefreshEvent", PowerSaver::resetRefreshEvent());
 
-			do
-			{
-				TRYCATCH("InputManager::parseEvent", InputManager::getInstance()->parseEvent(event, &window));
+			/* it's sleeping so don't disturb for a while */
+			SDL_Delay(30);
 
-				if (event.type == SDL_QUIT)
-					running = false;
-			} 
-			while(SDL_PollEvent(&event));
+			/* wait for event or timeout */
+			SDL_WaitEventTimeout(&event, 3);
 
-			// triggered if exiting from SDL_WaitEvent due to event
-			if (ps_standby)
-				// show as if continuing from last event
-				lastTime = SDL_GetTicks();
+			/* parse event */
+			TRYCATCH("InputManager::parseEvent", InputManager::getInstance()->parseEvent(event, &window));
 
-			// reset counter
-			ps_time = SDL_GetTicks();
-		}
-		else if (ps_standby)
-		{
-			// If exitting SDL_WaitEventTimeout due to timeout. Trail considering
-			// timeout as an event
-		//	ps_time = SDL_GetTicks();
-		}
+			if (event.type == SDL_QUIT)
+				running = false;
 
-		if(window.isSleeping())
-		{
-			lastTime = SDL_GetTicks();
-			SDL_Delay(1); // this doesn't need to be accurate, we're just giving up our CPU time until something wakes us up
+			// bypassing all updates and rendering
 			continue;
 		}
 
@@ -576,17 +566,39 @@ int main(int argc, char* argv[])
 		int deltaTime = curTime - lastTime;
 		lastTime = curTime;
 
-		// cap deltaTime if it ever goes negative
+		// cap deltaTime if it ever goes negative, set it 1 second instead
 		if(deltaTime < 0)
 			deltaTime = 1000;
 
+		/* update and render */
 		TRYCATCH("Window.update" ,window.update(deltaTime))	
 		TRYCATCH("Window.render", window.render())
-
 		Renderer::swapBuffers();
 
+		/* and flush out all outstanding log buffers */
 		Log::flush();
-	}
+
+		/* calculate time remaing based on 30 Hz (33.3 ms)*/
+		curTime = SDL_GetTicks();
+		deltaTime = curTime - frameStart_time;
+
+		/* try to run at around 30 Hz, if nothing happens */
+		if (deltaTime < 30 && deltaTime >= 1)
+		{
+			// PowerSaver can push events to exit SDL_WaitEventTimeout immediatly
+			// Reset this event's state
+			TRYCATCH("resetRefreshEvent", PowerSaver::resetRefreshEvent());
+
+			/* wait for event or timeout */
+			SDL_WaitEventTimeout(&event, deltaTime);
+
+			/* parse event */
+			TRYCATCH("InputManager::parseEvent", InputManager::getInstance()->parseEvent(event, &window));
+
+			if (event.type == SDL_QUIT)
+				running = false;
+		}
+	} /* while (running) */
 
 	if (isFastShutdown())
 		Settings::getInstance()->setBool("IgnoreGamelist", true);
