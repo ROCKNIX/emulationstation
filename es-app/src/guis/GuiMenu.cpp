@@ -3797,7 +3797,7 @@ void GuiMenu::openSoundSettings()
 	// disable sounds
 	auto sounds_enabled = std::make_shared<SwitchComponent>(mWindow);
 	sounds_enabled->setState(Settings::getInstance()->getBool("EnableSounds"));
-	s->addWithLabel(_("ENABLE NAVIGATION SOUNDS"), sounds_enabled);
+	s->addWithLabel(_("ENABLE SYSTEM SOUNDS"), sounds_enabled);
 	s->addSaveFunc([sounds_enabled]
 	{
 	    if (sounds_enabled->getState() && !Settings::getInstance()->getBool("EnableSounds") && PowerSaver::getMode() == PowerSaver::INSTANT)
@@ -3805,7 +3805,16 @@ void GuiMenu::openSoundSettings()
 			Settings::getInstance()->setPowerSaverMode("default");
 			PowerSaver::init();
 		}
+
+		if (sounds_enabled->getState()) 
+			/* user has toggled the sound option to on, so make sure audioManager is alive */
+			AudioManager::getInstance()->init();
+		else
+			/* user has toggled the sound option to off, so make sure audioManager is torn down */
+			AudioManager::getInstance()->deinit();
+
 	    Settings::getInstance()->setBool("EnableSounds", sounds_enabled->getState());
+		Settings::getInstance()->saveFile();
 	  });
 
         auto batteryWarning = std::make_shared<SwitchComponent>(mWindow);
@@ -3817,12 +3826,10 @@ void GuiMenu::openSoundSettings()
                 SystemConf::getInstance()->set("system.battery.warning", batteryWarningEnabled ? "1" : "0");
         });
 
-	auto video_audio = std::make_shared<SwitchComponent>(mWindow);
-	video_audio->setState(Settings::getInstance()->getBool("VideoAudio"));
-	s->addWithLabel(_("ENABLE VIDEO PREVIEW AUDIO"), video_audio);
-	s->addSaveFunc([video_audio] { Settings::getInstance()->setBool("VideoAudio", video_audio->getState()); });
-
-
+//	auto video_audio = std::make_shared<SwitchComponent>(mWindow);
+//	video_audio->setState(Settings::getInstance()->getBool("VideoAudio"));
+//	s->addWithLabel(_("ENABLE VIDEO PREVIEW AUDIO"), video_audio);
+//	s->addSaveFunc([video_audio] { Settings::getInstance()->setBool("VideoAudio", video_audio->getState()); });
 
 	mWindow->pushGui(s);
 }
