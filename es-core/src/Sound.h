@@ -30,9 +30,12 @@ public:
 	bool isPlaying() const;
 	void stop();
 
+	static void mixEnd_callback(int channel);
+
 private:
 	Sound(const std::string & path = "");
 	static std::map< std::string, std::shared_ptr<Sound> > sMap;
+
 };
 
 #endif // ES_CORE_SOUND_H

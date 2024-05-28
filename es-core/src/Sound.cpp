@@ -10,8 +10,9 @@ std::map< std::string, std::shared_ptr<Sound> > Sound::sMap;
 std::shared_ptr<Sound> Sound::get(const std::string& path)
 {
 	auto it = sMap.find(path);
-	if (it != sMap.cend())
+	if (it != sMap.cend()) {
 		return it->second;
+	}
 
 	std::shared_ptr<Sound> sound = std::shared_ptr<Sound>(new Sound(path));
 
@@ -59,13 +60,16 @@ void Sound::init()
 	deinit();
 
 	if (!AudioManager::isInitialized())
+	{
+		LOG(LogError) << "Sound::init: AM not initialized";
 		return;
+	}
 
 	if (mPath.empty() || !Utils::FileSystem::exists(mPath))
+	{
+		LOG(LogError) << "Sound::init: Empty path";
 		return;
-
-	if (!Settings::getInstance()->getBool("EnableSounds"))
-		return;
+	}
 
 	//load wav file via SDL
 	mSampleData = Mix_LoadWAV(mPath.c_str());
@@ -83,22 +87,32 @@ void Sound::deinit()
 
 	stop();
 	Mix_FreeChunk(mSampleData);
-	mSampleData = nullptr;	
+	mSampleData = nullptr;
+}
+
+void Sound::mixEnd_callback(int channel)
+{
+	//halt all channels
+	Mix_HaltChannel(-1);
 }
 
 void Sound::play()
 {
 	if (mSampleData == nullptr)
+	{
+		LOG(LogError) << "Sound::play(): nullptr";
 		return;
+	}
 
 	if (!Settings::getInstance()->getBool("EnableSounds"))
 		return;
 
 	mPlayingChannel = Mix_PlayChannel(-1, mSampleData, 0);
+	Mix_ChannelFinished(mixEnd_callback);
 }
 
 bool Sound::isPlaying() const
-{	
+{
 	return (mPlayingChannel >= 0);
 }
 
