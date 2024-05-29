@@ -3824,6 +3824,26 @@ void GuiMenu::openSoundSettings()
 
 
 
+    const std::string audioVDriverScript = "/usr/bin/audio_vdriver.sh";
+    if (Utils::FileSystem::exists(audioVDriverScript)) {
+        auto optionsVAudioDriver = std::make_shared<OptionListComponent<std::string> >(mWindow, _("AUDIO PLAYBACK DRIVER"), false);
+		std::string selectedVAudioDriver = std::string(getShOutput(R"(/usr/bin/audio_vdriver.sh)"));
+
+        std::string a;
+        for(std::stringstream ss(getShOutput(R"(/usr/bin/audio_vdriver.sh --options)")); getline(ss, a, ' '); ) {
+                optionsVAudioDriver->add(a, a, a == selectedVAudioDriver);
+        }
+
+        s->addWithLabel(_("AUDIO PLAYBACK DRIVER"), optionsVAudioDriver);
+
+       Window *window = mWindow;
+       s->addSaveFunc([this, window, audioVDriverScript, optionsVAudioDriver, selectedVAudioDriver] {
+        if (optionsVAudioDriver->changed()) {
+            runSystemCommand(audioVDriverScript + " " + optionsVAudioDriver->getSelected(), "", nullptr);
+            }
+        });
+    }
+
 	mWindow->pushGui(s);
 }
 
