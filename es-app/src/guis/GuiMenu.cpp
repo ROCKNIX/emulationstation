@@ -213,7 +213,7 @@ void GuiMenu::openResetOptions(Window* mWindow, std::string configName)
 
     resetOptions->addGroup(_("DATA MANAGEMENT"));
     resetOptions->addEntry(_("BACKUP CONFIGURATIONS"), true, [mWindow] {
-    mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING THIS WILL RESTART EMULATIONSTATION!\n\nAFTER THE SCRIPT IS DONE REMEMBER TO COPY THE FILE /storage/roms/backup/JELOS_BACKUP.zip TO SOME PLACE SAFE OR IT WILL BE DELETED ON NEXT REBOOT!\n\nBACKUP CURRENT CONFIG AND RESTART?"), _("YES"),
+    mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING THIS WILL RESTART EMULATIONSTATION!\n\nAFTER THE SCRIPT IS DONE REMEMBER TO COPY THE FILE /storage/roms/backup/ROCKNIX_BACKUP.zip TO SOME PLACE SAFE OR IT WILL BE DELETED ON NEXT REBOOT!\n\nBACKUP CURRENT CONFIG AND RESTART?"), _("YES"),
 				[] {
 				runSystemCommand("/usr/bin/run \"/usr/bin/backuptool backup\"", "", nullptr);
 				}, _("NO"), nullptr));
@@ -224,14 +224,6 @@ void GuiMenu::openResetOptions(Window* mWindow, std::string configName)
 				[] {
 				runSystemCommand("/usr/bin/run \"/usr/bin/backuptool restore\"", "", nullptr);
 				}, _("NO"), nullptr));
-     });
-
-    resetOptions->addEntry(_("DELETE EMPTY GAME DIRECTORIES"), true, [mWindow] {
-    mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING THIS WILL REBOOT YOUR DEVICE!\n\nDELETE EMPTY GAME DIRECTORIES??"
-), _("YES"),
-                                [] {
-                                runSystemCommand("/usr/bin/run \"/usr/bin/cleanup_overlay\"", "", nullptr);
-                                }, _("NO"), nullptr));
      });
 
     resetOptions->addEntry(_("CLEAN GAMELISTS & REMOVE UNUSED MEDIA"), true, [mWindow] {
@@ -991,7 +983,7 @@ void GuiMenu::openSystemSettings_batocera()
 		s->addWithLabel(_("AUTODETECT GAMES CARD"), mount_games);
 		mount_games->setOnChangedCallback([this, s, mount_games] {
 			SystemConf::getInstance()->setBool("system.automount", mount_games->getState());
-			runSystemCommand("/usr/bin/systemctl restart jelos-automount", "", nullptr);
+			runSystemCommand("/usr/bin/systemctl restart rocknix-automount", "", nullptr);
 		});
 
 		if (Utils::FileSystem::exists("/storage/.ms_supported") && MountGamesEnabled) 
@@ -1003,7 +995,7 @@ void GuiMenu::openSystemSettings_batocera()
 	                overlayState->setOnChangedCallback([this, s, overlayState] {
 	                        bool overlayStateEnabled = overlayState->getState();
 				SystemConf::getInstance()->setBool("system.merged.storage", overlayState->getState());
-	                        runSystemCommand("/usr/bin/systemctl restart jelos-automount", "", nullptr);
+	                        runSystemCommand("/usr/bin/systemctl restart rocknix-automount", "", nullptr);
 			});
 
 			auto optionsMSDevice = std::make_shared<OptionListComponent<std::string> >(mWindow, _("MERGED STORAGE PRIMARY CARD"), false);
@@ -1023,7 +1015,7 @@ void GuiMenu::openSystemSettings_batocera()
 					mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: CHANGING THE PRIMARY CARD CAN CAUSE ACCESS TO GAMES TO BE LOST, REQUIRING MANUAL INTERVENTION TO CORRECT. CONTINUE?"), _("YES"), [this, optionsMSDevice, selectedMSDevice]
 					{
 						SystemConf::getInstance()->set("system.merged.device", optionsMSDevice->getSelected());
-						runSystemCommand("/usr/bin/systemctl restart jelos-automount " + optionsMSDevice->getSelected(), "", nullptr);
+						runSystemCommand("/usr/bin/systemctl restart rocknix-automount " + optionsMSDevice->getSelected(), "", nullptr);
 					}, _("NO"), nullptr));
 				}
 			});
@@ -1126,7 +1118,7 @@ void GuiMenu::openSystemSettings_batocera()
 		s->addSaveFunc([this, optionsOCProfile, selectedOCProfile]
 		{
 			if (optionsOCProfile->changed()) {
-				mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: OVERCLOCKING YOUR DEVICE MAY RESULT IN STABILITY PROBLEMS OR CAUSE HARDWARE DAMAGE!\n\nUSING THE QUIET COOLING PROFILE WHILE USING CERTAIN OVERCLOCKS MAY CAUSE PANIC REBOOTS!\n\nJELOS IS NOT RESPONSIBLE FOR ANY DAMAGE THAT MAY OCCUR USING THESE SETTINGS!\n\nCLICK YES THAT YOU AGREE, OR NO TO CANCEL."), _("YES"),
+				mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: OVERCLOCKING YOUR DEVICE MAY RESULT IN STABILITY PROBLEMS OR CAUSE HARDWARE DAMAGE!\n\nUSING THE QUIET COOLING PROFILE WHILE USING CERTAIN OVERCLOCKS MAY CAUSE PANIC REBOOTS!\n\nROCKNIX IS NOT RESPONSIBLE FOR ANY DAMAGE THAT MAY OCCUR USING THESE SETTINGS!\n\nCLICK YES THAT YOU AGREE, OR NO TO CANCEL."), _("YES"),
 	                                [this,optionsOCProfile] {
 						SystemConf::getInstance()->set("system.overclock", optionsOCProfile->getSelected());
 						runSystemCommand("/usr/bin/overclock " + optionsOCProfile->getSelected(), "", nullptr);
@@ -4613,7 +4605,7 @@ void GuiMenu::popSpecificConfigurationGui(Window* mWindow, std::string title, st
 	        systemConfiguration->addSaveFunc([optionsOCProfile, selectedOCProfile, configName, mWindow]
 	        {
 	                if (optionsOCProfile->changed()) {
-	                        mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: OVERCLOCKING YOUR DEVICE MAY RESULT IN STABILITY PROBLEMS OR CAUSE HARDWARE DAMAGE!\n\nUSING THE QUIET COOLING PROFILE WHILE USING CERTAIN OVERCLOCKS MAY CAUSE PANIC REBOOTS!\n\nJELOS IS NOT RESPONSIBLE FOR ANY DAMAGE THAT MAY OCCUR USING THESE SETTINGS!\n\nCLICK YES THAT YOU AGREE, OR NO TO CANCEL."), _("YES"),
+	                        mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: OVERCLOCKING YOUR DEVICE MAY RESULT IN STABILITY PROBLEMS OR CAUSE HARDWARE DAMAGE!\n\nUSING THE QUIET COOLING PROFILE WHILE USING CERTAIN OVERCLOCKS MAY CAUSE PANIC REBOOTS!\n\nROCKNIX IS NOT RESPONSIBLE FOR ANY DAMAGE THAT MAY OCCUR USING THESE SETTINGS!\n\nCLICK YES THAT YOU AGREE, OR NO TO CANCEL."), _("YES"),
 				[optionsOCProfile,configName] {
 	                                SystemConf::getInstance()->set(configName + ".overclock", optionsOCProfile->getSelected());
 	                        }, _("NO"), nullptr));
