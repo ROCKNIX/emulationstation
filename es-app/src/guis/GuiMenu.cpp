@@ -1534,8 +1534,8 @@ void GuiMenu::dtbOverlayItem(Window* mWindow, GuiSettings *s, const std::string 
                         runSystemCommand(setDtb + " " + optionsDtb->getSelected(), "", nullptr);
                         runSystemCommand(overlayScript + " write", "", nullptr);
                         mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: You are altering "
-                            "hardware parameters thay may yield your system unstable or unbootable. "
-                            "In this case you will need to revcover by manually editing "
+                            "hardware parameters that may yield your system unstable or unbootable. "
+                            "In this case you will need to recover by manually editing "
                             "extlinux/extlinux.conf on the ROCKNIX partition from a PC, by "
                             "removing the whole line starting with: FDTOVERLAYS. \n "
                             "The changes will be applied on next reboot"),
