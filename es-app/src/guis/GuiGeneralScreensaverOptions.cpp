@@ -57,13 +57,13 @@ GuiGeneralScreensaverOptions::GuiGeneralScreensaverOptions(Window* window, int s
 	});
 
 	// Screensaver stops music 
-	if (Settings::getInstance()->getBool("audio.bgmusic"))
-	{
-		auto ctlStopMusic = std::make_shared<SwitchComponent>(mWindow);
-		ctlStopMusic->setState(Settings::getInstance()->getBool("StopMusicOnScreenSaver"));
-		addWithLabel(_("STOP MUSIC ON SCREENSAVER"), ctlStopMusic);
-		addSaveFunc([ctlStopMusic] { Settings::getInstance()->setBool("StopMusicOnScreenSaver", ctlStopMusic->getState()); });
-	}
+//	if (Settings::getInstance()->getBool("audio.bgmusic"))
+//	{
+//		auto ctlStopMusic = std::make_shared<SwitchComponent>(mWindow);
+//		ctlStopMusic->setState(Settings::getInstance()->getBool("EnableSounds"));
+//		addWithLabel(_("STOP MUSIC ON SCREENSAVER"), ctlStopMusic);
+//		addSaveFunc([ctlStopMusic] { Settings::getInstance()->setBool("EnableSounds", ctlStopMusic->getState()); });
+//	}
 
 	if (ssBehavior == "random video")
 		addVideoScreensaverOptions(selectItem);
@@ -143,10 +143,10 @@ void GuiGeneralScreensaverOptions::addVideoScreensaverOptions(int selectItem)
 	addWithLabel(_("STRETCH VIDEOS"), stretch_screensaver);
 	addSaveFunc([stretch_screensaver] { Settings::getInstance()->setBool("StretchVideoOnScreenSaver", stretch_screensaver->getState()); });
 
-	auto ss_video_mute = std::make_shared<SwitchComponent>(mWindow);
-	ss_video_mute->setState(Settings::getInstance()->getBool("ScreenSaverVideoMute"));
-	addWithLabel(_("MUTE VIDEO AUDIO"), ss_video_mute);
-	addSaveFunc([ss_video_mute] { Settings::getInstance()->setBool("ScreenSaverVideoMute", ss_video_mute->getState()); });
+	//auto ss_video_mute = std::make_shared<SwitchComponent>(mWindow);
+	//ss_video_mute->setState(Settings::getInstance()->getBool("ScreenSaverVideoMute"));
+	//addWithLabel(_("MUTE VIDEO AUDIO"), ss_video_mute);
+	//addSaveFunc([ss_video_mute] { Settings::getInstance()->setBool("ScreenSaverVideoMute", ss_video_mute->getState()); });
 
 	// Allow ScreenSaver Controls - ScreenSaverControls
 	auto controls = std::make_shared<SwitchComponent>(mWindow);

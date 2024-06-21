@@ -695,7 +695,8 @@ bool ApiSystem::setAudioOutputDevice(std::string selected)
 	oss << "set-audio set" << " '" << selected << "'";
 	int exitcode = system(oss.str().c_str());
 
-	Sound::get("/usr/share/emulationstation/resources/checksound.ogg")->play();
+	if (Settings::getInstance()->getBool("EnableSounds")) 
+		Sound::get("/usr/share/emulationstation/resources/checksound.ogg")->play();
 
 	return exitcode == 0;
 }
@@ -746,7 +747,8 @@ bool ApiSystem::setAudioOutputPath(std::string selected)
         oss << "set-audio esset" << " '" << selected << "'";
         int exitcode = system(oss.str().c_str());
 
-        Sound::get("/usr/share/emulationstation/resources/checksound.ogg")->play();
+		if (Settings::getInstance()->getBool("EnableSounds"))
+			Sound::get("/usr/share/emulationstation/resources/checksound.ogg")->play();
 
         return exitcode == 0;
 }
@@ -797,7 +799,8 @@ bool ApiSystem::setAudioOutputProfile(std::string selected)
 	oss << "batocera-audio set-profile" << " '" << selected << "'";
 	int exitcode = system(oss.str().c_str());
 
-	Sound::get("/usr/share/emulationstation/resources/checksound.ogg")->play();
+	if (Settings::getInstance()->getBool("EnableSounds"))
+		Sound::get("/usr/share/emulationstation/resources/checksound.ogg")->play();
 
 	return exitcode == 0;
 }
