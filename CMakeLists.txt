@@ -17,6 +17,7 @@ option(ENABLE_TTS "Set to ON to enable text to speech" OFF)
 option(ENABLE_UPDATES "Set to ON to enable online updates." ${ENABLE_UPDATES})
 option(PANFROST "Set to 1 to enable panfrost settings." ${PANFROST})
 option(WLROOTS "Set to 1 to enable wlroots settings." ${WLROOTS})
+option(MOONLIGHT "Set to 1 to enable moonlight settings." ${MOONLIGHT})
 
 # emuelec
 option(ENABLE_EMUELEC "Set to ON to enable EmuELEC changes" ${ENABLE_EMUELEC})
@@ -50,6 +51,10 @@ endif()
 
 if("${WLROOTS}" STREQUAL "1")
     add_definitions(-D_WLROOTS)
+endif()
+
+if("${MOONLIGHT}" STREQUAL "1")
+    add_definitions(-D_MOONLIGHT)
 endif()
 
 # emuelec
