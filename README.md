@@ -1,7 +1,7 @@
 EmulationStation
 ================
 
-EmulationStation is a cross-platform graphical front-end for emulators with controller navigation.  Thanks to Batocera, EmuELEC, and 351ELEC for the original sources that our fork is built on.
+EmulationStation is a cross-platform graphical front-end for emulators with controller navigation.  Thanks to JELOS, Batocera, EmuELEC, and 351ELEC for the original sources that our fork is built on.
 
 Building
 ========
