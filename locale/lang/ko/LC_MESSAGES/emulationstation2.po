@@ -170,7 +170,7 @@ msgid "Arcade system"
 msgstr "아케이드 시스템"
 
 msgid "this game's arcade system"
-msgstr "이 게임의 아케이드 시스템""
+msgstr "이 게임의 아케이드 시스템"
 
 msgid "Players"
 msgstr "플레이어"
@@ -1279,7 +1279,7 @@ msgid "SCRAPE MANUAL"
 msgstr "매뉴얼 스크랩"
 
 msgid "SCRAPE PADTOKEY SETTINGS"
-msgstr "패드-키 설정 스크랩
+msgstr "패드-키 설정 스크랩"
 
 msgid "USERNAME"
 msgstr "사용자명"
