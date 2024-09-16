@@ -1532,7 +1532,6 @@ void GuiMenu::dtbOverlayItem(Window* mWindow, GuiSettings *s, const std::string 
         s->addSaveFunc([this, mWindow, overlayScript, setDtb, optionsDtb] {
                 if (optionsDtb->changed()) {
                         runSystemCommand(setDtb + " " + optionsDtb->getSelected(), "", nullptr);
-                        runSystemCommand(overlayScript + " write", "", nullptr);
                         mWindow->pushGui(new GuiMsgBox(mWindow, _("WARNING: You are altering "
                             "hardware parameters that may yield your system unstable or unbootable. "
                             "In this case you will need to recover by manually editing "
