@@ -269,7 +269,7 @@ void SystemData::populateFolder(FolderData* folder, std::unordered_map<std::stri
 			}
 
 			// Don't loose time looking in downloaded_images, downloaded_videos & media folders
-			if (fn == "media" || fn == "medias" || fn == "images" || fn == "manuals" || fn == "videos" || fn == "assets" || Utils::String::startsWith(fn, "downloaded_") || Utils::String::startsWith(fn, "."))
+			if (fn == "media" || fn == "medias" || fn == "images" || fn == "manuals" || fn == "videos" || fn == "assets" || Utils::String::startsWith(fn, "downloaded_") || Utils::String::startsWith(fn, ".") || fileInfo.path.rfind("/ports") != std::string::npos)
 				continue;
 
 			// Hardcoded optimisation : WiiU has so many files in content & meta directories
