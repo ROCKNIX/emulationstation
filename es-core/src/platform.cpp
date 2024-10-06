@@ -376,8 +376,8 @@ std::string getArchString()
 	return "rk3588";
 #endif
 
-#if RK3588_ACE
-	return "rk3588-ace";
+#if SD865
+	return "sd865";
 #endif
 	
 #if S922X
