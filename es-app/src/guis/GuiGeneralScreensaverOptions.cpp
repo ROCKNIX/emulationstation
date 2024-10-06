@@ -42,7 +42,7 @@ GuiGeneralScreensaverOptions::GuiGeneralScreensaverOptions(Window* window, int s
 	
 	// Screensaver behavior
 	auto ctlBehavior = std::make_shared< OptionListComponent<std::string> >(mWindow, _("SCREENSAVER TYPE"), false);
-	ctlBehavior->addRange({ "dim", "black", "random video", "slideshow" }, ssBehavior);
+	ctlBehavior->addRange({ "dim", "black", "random video", "slideshow", "suspend", "shutdown" }, ssBehavior);
 	addWithLabel(_("SCREENSAVER TYPE"), ctlBehavior, selectItem == 1);
 	ctlBehavior->setSelectedChangedCallback([this](const std::string& name)
 	{
