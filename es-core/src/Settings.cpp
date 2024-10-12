@@ -109,7 +109,7 @@ void Settings::setDefaults()
 
 	mBoolMap["FirstJoystickOnly"] = false;
 #ifdef _ENABLEEMUELEC
-	mBoolMap["EnableSounds"] = true;
+	mBoolMap["EnableSounds"] = false;
 #else
 	mBoolMap["EnableSounds"] = false;
 #endif
@@ -171,7 +171,7 @@ void Settings::setDefaults()
 	mBoolMap["StretchVideoOnScreenSaver"] = false;
 	mStringMap["PowerSaverMode"] = "default"; // batocera
 
-	mBoolMap["StopMusicOnScreenSaver"] = false;
+	//mBoolMap["StopMusicOnScreenSaver"] = false;
 
 	mBoolMap["RetroachievementsMenuitem"] = true;
 	mIntMap["ScreenSaverSwapImageTimeout"] = 10000;
@@ -214,8 +214,8 @@ void Settings::setDefaults()
 	mIntMap["ScreenSaverSwapVideoTimeout"] = 30000;
 
 	mBoolMap["EnableVideoPreviews"] = true;
-	mBoolMap["VideoAudio"] = true;
-	mBoolMap["ScreenSaverVideoMute"] = false;
+//	mBoolMap["VideoAudio"] = true;
+	//mBoolMap["ScreenSaverVideoMute"] = false;
 	mBoolMap["VideoLowersMusic"] = true;
 	mBoolMap["VolumePopup"] = true;
 

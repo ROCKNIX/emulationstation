@@ -199,7 +199,8 @@ void CarouselComponent::onCursorChanged(const CursorState& state)
 		return;
 
 	if (!mScrollSound.empty())
-		Sound::get(mScrollSound)->play();
+		if (Settings::getInstance()->getBool("EnableSounds"))
+			Sound::get(mScrollSound)->play();
 
 	int oldCursor = mLastCursor;
 	
