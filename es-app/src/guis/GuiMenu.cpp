@@ -3708,7 +3708,7 @@ void GuiMenu::openSoundSettings()
 		s->addGroup(_("VOLUME"));
 
 		// volume
-		auto volume = std::make_shared<SliderComponent>(mWindow, 0.f, 100.f, 10.f, "%");
+		auto volume = std::make_shared<SliderComponent>(mWindow, 0.f, 100.f, 5.f, "%");
 		volume->setValue((float)VolumeControl::getInstance()->getVolume());
 		volume->setOnValueChanged([](const float &newVal) { VolumeControl::getInstance()->setVolume((int)Math::round(newVal)); });
 		s->addWithLabel(_("SYSTEM VOLUME"), volume);

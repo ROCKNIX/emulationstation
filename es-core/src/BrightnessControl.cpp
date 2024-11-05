@@ -75,7 +75,7 @@ int BrightnessControl::getBrightness() const
     }
     //TODO: need to make a rational initial condition -- this should always be populated by the brightness script on boot??
     if (brightness_table.empty()) {
-      brightness_table = {0, 0.04, 0.08, 0.13, 0.19, 0.25, 0.33, 0.42, 0.54, 0.71, 1};
+      brightness_table = {0, 0.02, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.45, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.9, 1};
     }
 
 		auto sysbright = SystemConf::getInstance()->get("system.brightness");
