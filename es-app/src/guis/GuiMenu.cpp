@@ -1220,6 +1220,23 @@ void GuiMenu::openSystemSettings_batocera()
                 });
         }
 
+        if (GetEnv("DEVICE_GPU_OVERCLOCK") == "true"){
+                // Add option to enable gpu overclocking
+                auto gpu_overclock = std::make_shared<SwitchComponent>(mWindow);
+                bool internalmoduleEnabled = SystemConf::getInstance()->get("enable.gpu-overclock") == "1";
+                gpu_overclock->setState(internalmoduleEnabled);
+                s->addWithLabel(_("ENABLE GPU OVERCLOCK"), gpu_overclock);
+                gpu_overclock->setOnChangedCallback([gpu_overclock] {
+                if (gpu_overclock->getState() == false) {
+                        runSystemCommand("/usr/lib/autostart/quirks/platforms/SD865/bin/gpu_overclock disable", "", nullptr);
+                } else {
+                        runSystemCommand("/usr/lib/autostart/quirks/platforms/SD865/bin/gpu_overclock enable", "", nullptr);
+                }
+                bool gpuoverclock = gpu_overclock->getState();
+                        SystemConf::getInstance()->set("enable.gpu-overclock", gpuoverclock ? "1" : "0");
+                });
+        }
+
         const std::string gpuDriverScript = "/usr/bin/gpudriver";
         if (Utils::FileSystem::exists(gpuDriverScript)) {
                 auto optionsGpuDriver = std::make_shared<OptionListComponent<std::string> >(mWindow, _("GPU DRIVER"), false);
