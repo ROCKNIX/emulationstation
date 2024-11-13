@@ -609,7 +609,7 @@ bool RetroAchievements::testAccount(const std::string& username, const std::stri
 		HttpReq request("https://retroachievements.org/dorequest.php?r=login&u=" + HttpReq::urlEncode(username) + "&p=" + HttpReq::urlEncode(password), &options);
 		if (!request.wait())
 		{
-			error = request.getErrorMsg();
+			tokenOrError = request.getErrorMsg();
 			return false;
 		}
 
