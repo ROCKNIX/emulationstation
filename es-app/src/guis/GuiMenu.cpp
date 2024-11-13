@@ -1909,7 +1909,7 @@ void GuiMenu::openRetroachievementsSettings()
 		if (newState && (!retroachievementsEnabled || username != newUsername || password != newPassword || token.empty()))
 		{
 			std::string tokenOrError;
-			if (!RetroAchievements::testAccount(newUsername, newPassword, tokenOrError))
+			if (RetroAchievements::testAccount(newUsername, newPassword, tokenOrError))
 			{
 				SystemConf::getInstance()->set("global.retroachievements.token", tokenOrError);
 			}
