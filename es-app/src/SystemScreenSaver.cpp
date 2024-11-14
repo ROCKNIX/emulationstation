@@ -23,6 +23,7 @@
 #include "BrightnessControl.h"
 #include "ImageIO.h"
 #include "utils/Randomizer.h"
+#include "platform.h"
 
 #define FADE_TIME 			500
 
@@ -183,6 +184,15 @@ void SystemScreenSaver::startScreenSaver()
 	// No videos. Just use a standard screensaver
 	mState = STATE_SCREENSAVER_ACTIVE;
 	mCurrentGame = NULL;
+
+        if (screensaver_behavior == "suspend")
+        {
+            runSystemCommand("/usr/bin/systemctl suspend", "", nullptr);
+        }
+        else if (screensaver_behavior == "shutdown")
+        {
+            runSystemCommand("/usr/bin/systemctl poweroff", "", nullptr);
+        }
 }
 
 void SystemScreenSaver::stopScreenSaver()
