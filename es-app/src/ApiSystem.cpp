@@ -279,7 +279,7 @@ std::pair<std::string, int> ApiSystem::scrape(BusyComponent* ui)
 
 bool ApiSystem::ping() 
 {
-	if (!executeScriptLegacy("timeout 1 ping -c 1 -t 255 -w 1 8.8.8.8")) // ping Google DNS
+	if (!executeScriptLegacy("timeout 3 curl http://www.google.com/generate_204")) // Google's connectivity check on Android
 		return executeScriptLegacy("timeout 2 ping -c 1 -t 255 -w 1 8.8.4.4"); // ping Google secondary DNS & give 2 seconds
 
 	return true;
