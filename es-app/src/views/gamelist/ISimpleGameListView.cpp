@@ -234,7 +234,8 @@ bool ISimpleGameListView::input(InputConfig* config, Input input)
 		if (idx != nullptr && idx->hasRelevency())
 			return true;
 
-		Sound::getFromTheme(mTheme, getName(), "menuOpen")->play();
+		if (Settings::getInstance()->getBool("EnableSounds"))
+			Sound::getFromTheme(mTheme, getName(), "menuOpen")->play();
 		mWindow->pushGui(new GuiGamelistOptions(mWindow, this, this->mRoot->getSystem()));
 		return true;
 	}
@@ -267,7 +268,8 @@ bool ISimpleGameListView::input(InputConfig* config, Input input)
 
 			populateList(folder->getChildrenListToDisplay());
 			setCursor(top);
-			Sound::getFromTheme(getTheme(), getName(), "back")->play();
+			if (Settings::getInstance()->getBool("EnableSounds"))
+				Sound::getFromTheme(getTheme(), getName(), "back")->play();
 		}
 		else if (mPopupSelfReference)
 		{
@@ -320,7 +322,8 @@ void ISimpleGameListView::showSelectedGameOptions()
 	if (cursor == nullptr)
 		return;
 
-	Sound::getFromTheme(mTheme, getName(), "menuOpen")->play();
+	if (Settings::getInstance()->getBool("EnableSounds"))
+		Sound::getFromTheme(mTheme, getName(), "menuOpen")->play();
 	mWindow->pushGui(new GuiGameOptions(mWindow, cursor));
 }
 
@@ -341,11 +344,13 @@ void ISimpleGameListView::showSelectedGameSaveSnapshots()
 
 	if (SaveStateRepository::isEnabled(cursor))
 	{
-		Sound::getFromTheme(mTheme, getName(), "menuOpen")->play();
+		if (Settings::getInstance()->getBool("EnableSounds"))
+			Sound::getFromTheme(mTheme, getName(), "menuOpen")->play();
 
 		mWindow->pushGui(new GuiSaveState(mWindow, cursor, [this, cursor](SaveState state)
 		{
-			Sound::getFromTheme(getTheme(), getName(), "launch")->play();
+			if (Settings::getInstance()->getBool("EnableSounds"))
+				Sound::getFromTheme(getTheme(), getName(), "launch")->play();
 
 			LaunchGameOptions options;
 			options.saveStateInfo = state;
@@ -375,7 +380,8 @@ void ISimpleGameListView::launchSelectedGame()
 
 		populateList(folder->getChildrenListToDisplay());
 		setCursor(top);
-		Sound::getFromTheme(getTheme(), getName(), "back")->play();
+		if (Settings::getInstance()->getBool("EnableSounds"))
+			Sound::getFromTheme(getTheme(), getName(), "back")->play();
 	}
 	else
 	{
@@ -386,7 +392,8 @@ void ISimpleGameListView::launchSelectedGame()
 			{
 				mWindow->pushGui(new GuiSaveState(mWindow, cursor, [this, cursor](SaveState state)
 				{
-					Sound::getFromTheme(getTheme(), getName(), "launch")->play();
+					if (Settings::getInstance()->getBool("EnableSounds"))
+						Sound::getFromTheme(getTheme(), getName(), "launch")->play();
 
 					LaunchGameOptions options;
 					options.saveStateInfo = state;
@@ -396,7 +403,8 @@ void ISimpleGameListView::launchSelectedGame()
 			}
 			else
 			{
-				Sound::getFromTheme(getTheme(), getName(), "launch")->play();
+				if (Settings::getInstance()->getBool("EnableSounds"))
+					Sound::getFromTheme(getTheme(), getName(), "launch")->play();
 				launch(cursor);
 			}
 		}

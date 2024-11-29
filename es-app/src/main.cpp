@@ -331,8 +331,6 @@ void playVideo()
 		return;
 	}
 
-	Settings::getInstance()->setBool("VideoAudio", true);
-
 	bool exitLoop = false;
 
 	VideoVlcComponent vid(&window);
@@ -513,14 +511,16 @@ int main(int argc, char* argv[])
 	// Create a flag in  temporary directory to signal READY state
 	ApiSystem::getInstance()->setReadyFlag();
 
-	// Play music
-	AudioManager::getInstance()->init();
+	// Play music (as part of ES startup)
+	if (Settings::getInstance()->getBool("EnableSounds"))
+	{
+		AudioManager::getInstance()->init();
 
-	if (ViewController::get()->getState().viewing == ViewController::GAME_LIST || ViewController::get()->getState().viewing == ViewController::SYSTEM_SELECT)
-		AudioManager::getInstance()->changePlaylist(ViewController::get()->getState().getSystem()->getTheme());
-	else
-		AudioManager::getInstance()->playRandomMusic();
-
+		if (ViewController::get()->getState().viewing == ViewController::GAME_LIST || ViewController::get()->getState().viewing == ViewController::SYSTEM_SELECT)
+			AudioManager::getInstance()->changePlaylist(ViewController::get()->getState().getSystem()->getTheme());
+		else
+			AudioManager::getInstance()->playRandomMusic();
+	}
 
 	int lastTime = SDL_GetTicks();
 	int ps_time = SDL_GetTicks();

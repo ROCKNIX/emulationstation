@@ -498,7 +498,7 @@ void VideoVlcComponent::handleLooping()
 				}
 			}
 
-			if (!getPlayAudio() || (!mScreensaverMode && Settings::getInstance()->getBool("VideoAudio") == false) || (Settings::getInstance()->getBool("ScreenSaverVideoMute") == true && mScreensaverMode))
+			if (!getPlayAudio() || (!mScreensaverMode && Settings::getInstance()->getBool("EnableSounds") == false) )
 			{
 				libvlc_audio_set_mute(mMediaPlayer, 1);
 			} else {
@@ -545,7 +545,7 @@ void VideoVlcComponent::startVideo()
 			mMedia = libvlc_media_new_path(mVLC, path.c_str());
 			if (mMedia)
 			{
-				// use : vlc –long-help
+				// use : vlc ï¿½long-help
 				// WIN32 ? libvlc_media_add_option(mMedia, ":avcodec-hw=dxva2");
 				// RPI/OMX ? libvlc_media_add_option(mMedia, ":codec=mediacodec,iomx,all"); .
 
@@ -620,7 +620,7 @@ void VideoVlcComponent::startVideo()
 
 					if (hasAudioTrack)
 					{
-						if (!getPlayAudio() || (!mScreensaverMode && Settings::getInstance()->getBool("VideoAudio") == false) || (Settings::getInstance()->getBool("ScreenSaverVideoMute") == true && mScreensaverMode))
+						if (!getPlayAudio() || (!mScreensaverMode && Settings::getInstance()->getBool("EnableSounds") == false))
 							libvlc_audio_set_mute(mMediaPlayer, 1);
 						else
 							libvlc_audio_set_mute(mMediaPlayer, 0);

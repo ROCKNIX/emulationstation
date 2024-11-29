@@ -835,7 +835,8 @@ void SystemView::onCursorChanged(const CursorState& state)
 	  TextToSpeech::getInstance()->say(getSelected()->getFullName());
 
 	if (!mCarousel.scrollSound.empty())
-		Sound::get(mCarousel.scrollSound)->play();
+		if (Settings::getInstance()->getBool("EnableSounds"))
+			Sound::get(mCarousel.scrollSound)->play();
 
 	int oldCursor = mLastCursor;
 	mLastCursor = mCursor;
